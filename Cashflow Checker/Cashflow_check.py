@@ -88,8 +88,6 @@ def main():
     print(f'File read: {filename}')
     FILE = openpyxl.load_workbook("X:/Fund Management/Fund Management Dealing/" + filename, data_only=True)
     FILE = FILE.active
-    # FILE = openpyxl.load_workbook("Intra Day Cash Flow Report - 270522 0830VP.XLSX", data_only=True)
-    # FILE = FILE.active
     overweight_classes = check_cashflows()
     portfolios_to_check = portfolio_weighting_calculator(overweight_classes)
     if len(portfolios_to_check) == 0:
