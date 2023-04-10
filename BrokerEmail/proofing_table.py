@@ -1,4 +1,5 @@
 import pandas as pd
+
 from isin_to_ticker import ISINToTicker
 
 pd.set_option('display.max_columns', None)
@@ -29,7 +30,9 @@ class ProofingTable:
 
     def set_30d_avg(self):
         self.ProofDataFrame['30 day rolling average'] = self.isin_to_ticker.thirty_rolling_avg
-        self.ProofDataFrame['30 day rolling average'] = self.ProofDataFrame['30 day rolling average'].str.replace(",", "").astype(float)
+        self.ProofDataFrame['30 day rolling average'] = self.ProofDataFrame['30 day rolling average'].str.replace(",",
+                                                                                                                  "").astype(
+            float)
 
     def get_agg_traded(self):
         ticker_sums = self.broker_df.groupby('Ticker')['Shares'].sum()
@@ -41,17 +44,21 @@ class ProofingTable:
 
     def set_pct_traded(self):
         for ticker in self.tickers:
-            self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, '% Traded'] = round(self.tickers_dict[ticker] / self.ProofDataFrame.loc[
-                self.ProofDataFrame['Ticker'] == ticker, '30 day rolling average'] * 100, 2)
-            self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, '% Traded'] = self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker,
-            '% Traded'].astype(str) + '%'
+            self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, '% Traded'] = round(
+                self.tickers_dict[ticker] / self.ProofDataFrame.loc[
+                    self.ProofDataFrame['Ticker'] == ticker, '30 day rolling average'] * 100, 2)
+            self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, '% Traded'] = self.ProofDataFrame.loc[
+                                                                                               self.ProofDataFrame[
+                                                                                                   'Ticker'] == ticker,
+                                                                                               '% Traded'].astype(
+                str) + '%'
 
     def set_price_per_share(self):
         for ticker in self.tickers:
-            self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, 'Price per Share'] = self.class_input.Tickers_Dict[ticker][
-                'Directional Price']
+            self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, 'Price per Share'] = \
+                self.class_input.Tickers_Dict[ticker][
+                    'Directional Price']
 
     def set_urls(self):
         for ticker, url, _ in self.isin_to_ticker.urls:
             self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, 'URL'] = url
-

@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class DataProcessing:
     # This should be automated, defining it removes the point of the whole process.
     def __init__(self, unprocessed_document: pd.DataFrame):

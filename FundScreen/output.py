@@ -3,7 +3,7 @@ import pandas as pd
 
 class Calculations:
     @staticmethod
-    def UpDownDifference(df):
+    def updowndifference(df):
         df['Up Down difference'] = df['Up Capture Ratio'] - df['Down Capture Ratio']
 
 
@@ -18,10 +18,10 @@ class OutputPreprocessing:
         self.LargeGrowth = None
         self.GrowthValueBrackets = [100, 200]
         self.SmallLargeBarrier = 6000
-        self.ClassifyDataframes()
+        self.classify_dataframes()
 
     # TODO: I could do this here, or I could break into small and large, and then into value, core, growth?
-    def ClassifyDataframes(self):
+    def classify_dataframes(self):
         vgs = 'Value-Growth Score (Long)'
         amc = 'Average Market Cap (mil) (Long)'
         self.SmallValue = self.DF.loc[(self.DF[vgs].astype(float) <= self.GrowthValueBrackets[0])
@@ -50,32 +50,32 @@ class OutputDocument:
         self.Filename = filename
         self.Sheets = ['Small Value', 'Small Core', 'Small Growth', 'Large Value', 'Large Core', 'Large Growth']
         self.ProcessedDoc = processed_document
-        self.PopulateSheets()
+        self.populate_sheets()
 
-    def PopulateSheets(self):
+    def populate_sheets(self):
         writer = pd.ExcelWriter(self.Filename[:-4] + ' Output.xlsx')
-        self.SmallValueWriter(writer)
-        self.SmallCoreWriter(writer)
-        self.SmallGrowthWriter(writer)
-        self.LargeValueWriter(writer)
-        self.LargeCoreWriter(writer)
-        self.LargeGrowthWriter(writer)
+        self._small_value_writer(writer)
+        self._small_core_writer(writer)
+        self._small_growth_writer(writer)
+        self._large_value_writer(writer)
+        self._large_core_writer(writer)
+        self._large_growth_writer(writer)
         writer.save()
 
-    def SmallValueWriter(self, writer):
+    def _small_value_writer(self, writer):
         self.ProcessedDoc.SmallValue.to_excel(writer, sheet_name=self.Sheets[0], index=False)
 
-    def SmallCoreWriter(self, writer):
+    def _small_core_writer(self, writer):
         self.ProcessedDoc.SmallCore.to_excel(writer, sheet_name=self.Sheets[1], index=False)
 
-    def SmallGrowthWriter(self, writer):
+    def _small_growth_writer(self, writer):
         self.ProcessedDoc.SmallGrowth.to_excel(writer, sheet_name=self.Sheets[2], index=False)
 
-    def LargeValueWriter(self, writer):
+    def _large_value_writer(self, writer):
         self.ProcessedDoc.LargeValue.to_excel(writer, sheet_name=self.Sheets[3], index=False)
 
-    def LargeCoreWriter(self, writer):
+    def _large_core_writer(self, writer):
         self.ProcessedDoc.LargeCore.to_excel(writer, sheet_name=self.Sheets[4], index=False)
 
-    def LargeGrowthWriter(self, writer):
+    def _large_growth_writer(self, writer):
         self.ProcessedDoc.LargeGrowth.to_excel(writer, sheet_name=self.Sheets[5], index=False)

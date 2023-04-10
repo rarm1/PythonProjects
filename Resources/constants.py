@@ -1,3 +1,4 @@
+# TODO: Move all resources into this folder multi-use files as well as
 # TODO: Remove single use values
 # TODO: Refactor to be OO
 global READER_SHEET
@@ -163,8 +164,8 @@ def find_funds(bucket_to_trade):
 def bucket_identifier(fund):
     """
     This takes a fund, and finds the bucket it is part of. Used for rebalancer.
-    :param fund: Cell
-    :return: Cell
+    :param fund:
+    :return:
     """
     sector_to_find = (fund.offset(0, 4))
     for x in all_buckets():
@@ -302,10 +303,10 @@ def all_bucket_deal_to_target(buckets=all_buckets):
             return funds_dict
 
 
-def sector_deal_to_target(bucket_to_ID):
-    if bucket_to_ID in equities_sector():
+def sector_deal_to_target(bucket_to_id):
+    if bucket_to_id in equities_sector():
         return find_equity_sector_dtt()
-    if bucket_to_ID in bonds_sector():
+    if bucket_to_id in bonds_sector():
         return find_bond_sector_dtt()
-    if bucket_to_ID == money_markets_bucket():
+    if bucket_to_id == money_markets_bucket():
         return find_mm_dtt()

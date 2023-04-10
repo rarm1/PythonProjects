@@ -1,9 +1,11 @@
-from Resources import file_id_reader
 import pandas as pd
+
+from Resources import file_id_reader
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.expand_frame_repr', False)
 pd.set_option('display.max_rows', None)
+
 
 class ImportProcessing:
     # TODO: This cleaning feels very rigid. Could I do something like get all the dates and then remove where either

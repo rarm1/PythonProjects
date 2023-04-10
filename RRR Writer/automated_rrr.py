@@ -1,13 +1,13 @@
 # Imports
+import statistics as stats
 from operator import itemgetter
 
-import openpyxl as xl
-import statistics as stats
 import numpy as np
+import openpyxl as xl
 
 from Resources import file_id_reader
 
-#TODO: Refactor to be object oriented. Unnecessarily complicated at the moment.
+# TODO: Refactor to be object oriented. Unnecessarily complicated at the moment.
 global READER_SHEET, ALL_FUNDS, ALL_RETURNS, MODIFIED_FILENAME
 
 
@@ -35,7 +35,6 @@ def process_weekly_returns(fund_returns):
     w1, w2, w3, w4, all_mr, three_year_returns, five_year_returns = 100, 100, 100, 100, [], None, None
     # Uses a generator style function to calculate all fund returns from array
     return_calculations = [(a.value / 100) + 1 for a in fund_returns]
-    started = False
     for idx, weekly in enumerate(return_calculations):
         # if weekly is not None:
         #     started = True
@@ -103,7 +102,7 @@ def amr_calculator(amr, year_3_value, year_5_value):
 def output_generator(company_being_read, amr, amount_returns, max_returns):
     company_name = company_being_read.offset(0, -1).value
     isin = company_being_read.value
-    IA_Sector = company_being_read.offset(0, 1).value
+    ia_sector = company_being_read.offset(0, 1).value
     average_cap = company_being_read.offset(0, 2).value
     g_v_s = company_being_read.offset(0, 3).value
     ucr = company_being_read.offset(0, 4).value
@@ -120,7 +119,7 @@ def output_generator(company_being_read, amr, amount_returns, max_returns):
     # if dcr is not None and ucr is not None:
     #     difference = ucr - dcr
 
-    return [company_name, isin, IA_Sector, average_cap, g_v_s, year_three, year_five, amount_returns, ucr, dcr,
+    return [company_name, isin, ia_sector, average_cap, g_v_s, year_three, year_five, amount_returns, ucr, dcr,
             ucr - dcr]
 
 
@@ -179,10 +178,9 @@ def decimate_rrr(deciles, all_funds):
 # Groups all funds by their growth/value scores.
 def sort_growth_value_scores(funds, boundaries, headers):
     value, balanced, growth = [], [], []
-    lookup = 0
     for i, head in enumerate(headers):
         if "value-growth" in head.lower():
-            lookup = i-1
+            i = i - 1
     for fund in funds:
         print(fund)
         # TODO: Make this dynamic
@@ -198,9 +196,9 @@ def sort_growth_value_scores(funds, boundaries, headers):
 # TODO: Microcap - Mid & Small breakdown. Take from Strip by RRR. micro's are less than between 200-300 see what works.
 #
 def high_cap_low_cap(grow_bal_val_sorted):
-    value_low_cap, value_high_cap, balanced_low_cap, balanced_high_cap, growth_low_cap, growth_high_cap,  = [], [], \
-                                                                                                            [], [], \
-                                                                                                            [], []
+    value_low_cap, value_high_cap, balanced_low_cap, balanced_high_cap, growth_low_cap, growth_high_cap, = [], [], \
+        [], [], \
+        [], []
     for idx, v_g_s in enumerate(grow_bal_val_sorted):
         # TODO: What'd be good is having in here something that dynamically finds the location. Maybe I can assume
         #  that they'll be strings?
@@ -209,7 +207,7 @@ def high_cap_low_cap(grow_bal_val_sorted):
             for i in range(0, 10):
                 try:
                     ref1 = fund[i]
-                    ref1 = float(ref1+1)
+                    ref1 = float(ref1 + 1)
                     ref1 = i
                     break
                 except TypeError:
@@ -224,8 +222,8 @@ def high_cap_low_cap(grow_bal_val_sorted):
                 elif idx == 2:
                     growth_high_cap.append(fund)
             # elif fund[2] < 250:
-                # TODO: This can be added to output at later time.
-                # continue
+            # TODO: This can be added to output at later time.
+            # continue
             else:
                 if idx == 0:
                     value_low_cap.append(fund)
@@ -239,7 +237,6 @@ def high_cap_low_cap(grow_bal_val_sorted):
 
 def get_headers():
     allowable_headers = []
-    header_cells = []
     for i in range(1, 50):
         cell = READER_SHEET.cell(9, i).value
 

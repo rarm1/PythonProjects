@@ -5,11 +5,12 @@ There was several important boundaries to establish. Reading data from Horizon o
 This is due to cost concerns, as well as the permissions required for this level of access.
 
 ### Structure ###
-This folder contains the necessary project files, as well as a list of rebalancers that've been tested. There is also a 
+This folder contains the necessary project files, as well as a list of rebalancers that've been tested. There is also a
 folder that also contains populated rebalancers that demonstrate the suggested trades. Completed rebalancers will also
 contain a sheet that contains a list of trades in the same format as the Fund Managers .csv file.
 
 Instructions for this program can be found in the [instructions](INSTRUCTIONS.pdf) document.
+Condensed instructions can be found in the [Execution Instuctions](Execution Instructions.pdf)
 
 This Python project has been broken into several, smaller Python files. This is to increase the ease with which the
 document can be read.
@@ -23,7 +24,8 @@ The file ID reader prompts the user for the file(s) that they want to be read.
 
 Following input from ops and dealing, functions have been added to allow for intelligent generation of filenames,
 as well as finding the Scheme Identifier from the 'Constants/scheme_list_desig.xlsx' spreadsheet.
-If the designation is not found, steps should be taken to ensure the [Scheme List](Resources/scheme_list.xlsx) document
+If the designation is not found, steps should be taken to ensure the
+[Scheme List]("Resources/scheme_list_desig.xlsm") document
 is structured correctly.
 
 ### Individual Files and their purpose ###
@@ -50,15 +52,25 @@ adding it to an independent file reduced the amount of duplicated code.
 This file was generated, because these functions are run for both functions of this project. 
 As a result, having this written once, and able to be referenced from various files, saved repeating code chunks. 
 
-#### Convert to XLSX ####
-This program brute forces a xls file to xlsx. This removes all formatting, etc., but it allows for rebalancing xls. 
-Only to be used when it's not possible to save the file as XLSX or XLSM. 
-
 
 ### Fund managers and their dealing codes ### 
-Liz: ELIZABETH
-Dmitry: DMITRY
-Richard Cole: FMONEY
-Wayne: OPES
-IBOSS: IBOSS
-SENTINEL: SENTINEL
+Liz: ELIZABETH  
+Dmitry: DMITRY  
+Richard Cole: FMONEY  
+Wayne: OPES  
+IBOSS: IBOSS  
+SENTINEL: SENTINEL  
+CLARION: CLARION (This actually returns Liz as the fund manager, but changes notes to say 'Clarion Instructed')
+
+
+### Trade Reading ###
+Trade reading will take completed rebalancer documents and generate a document for automated trading. 
+
+The files used by the trade reading function are: 
+- trade_reader.py
+- trade_writer.py
+- file_id_reader.py
+- constants.py
+
+For this to work correctly there needs to be completed rebalancers in the root directory, and no other .xlsx files.
+Blank rebalancers, or other .xlsx files will return a skewed output. 

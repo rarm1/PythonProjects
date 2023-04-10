@@ -4,13 +4,14 @@ Created on Wed Aug  3 09:54:21 2022
 
 @author: Richard Armstrong
 """
+import statistics as stats
 # TODO: This reads in as openpyxl. Which is great for usability but shit for speed. Can this be cleaned up?
 # Break down into 8 classifications.
 # Imports
 from operator import itemgetter
-import openpyxl as xl
-import statistics as stats
+
 import numpy as np
+import openpyxl as xl
 import pandas as pd
 
 from Resources import file_id_reader
@@ -43,7 +44,6 @@ def process_weekly_returns(fund_returns):
     :return: all_mr, three_year_returns, five_year_returns
     """
     # Variable declaration
-    count_y5_per_fund = 0
     w1, w2, w3, w4, all_mr, three_year_returns, five_year_returns = 100, 100, 100, 100, [], None, None
     # Uses a generator style function to calculate all fund returns from array
     return_calculations = [(a.value / 100) + 1 for a in fund_returns]
@@ -137,11 +137,11 @@ def find_value_growth_score_sheets(fund_array):
             continue
         try:
             float(fund[3])
-        except ValueError as e:
+        except ValueError:
             # print(e)
             continue
         to_return.append(fund[3])
-    return np.quantile(to_return, q=np.arange(0, 1, 1/3))[1:]
+    return np.quantile(to_return, q=np.arange(0, 1, 1 / 3))[1:]
 
 
 # Groups all funds by their growth/value scores.
@@ -166,7 +166,7 @@ def sort_growth_value_scores(funds, boundaries):
 def high_cap_low_cap(grow_bal_val_sorted):
     value_low_cap, value_mid, value_high_cap = [], [], []
     balanced_low_cap, balanced_mid, balanced_high_cap = [], [], []
-    growth_low_cap, growth_mid, growth_high_cap,  = [], [], []
+    growth_low_cap, growth_mid, growth_high_cap, = [], [], []
     for idx, v_g_s in enumerate(grow_bal_val_sorted):
         for fund in v_g_s:
             if fund[2] is None:
@@ -199,14 +199,16 @@ def high_cap_low_cap(grow_bal_val_sorted):
 
 def filter_the_best(fully_sorted_companies: [list], companies_per_sector) -> list:
     """
-    :type fully_sorted_companies: list of lists of lists
+    :param companies_per_sector:
+    :type fully_sorted_companies: list
     :rtype list of lists
     """
     # filtered_companies = [classification[:5] if idx % 2 == 1 else classification[:10] for idx, classification in enumerate(fully_sorted_companies, start=1)]
     # company_names = [[i[0] for i in classification] for classification in filtered_companies]
 
-    filtered_companies = [classification[:companies_per_sector] for idx, classification in enumerate(fully_sorted_companies,
-                                                                                        start=1)]
+    filtered_companies = [classification[:companies_per_sector] for idx, classification in
+                          enumerate(fully_sorted_companies,
+                                    start=1)]
     company_names = [[i[0] for i in classification] for classification in filtered_companies]
     return company_names
 
@@ -245,9 +247,10 @@ def strip_main():
     grow_bal_val_boundaries = find_value_growth_score_sheets(deciled_output)
     grow_bal_val_sorted = sort_growth_value_scores(deciled_output, grow_bal_val_boundaries)
     fully_sorted_companies = high_cap_low_cap(grow_bal_val_sorted)
-    best_filtered_companies = filter_the_best(fully_sorted_companies, companies_per_sector=10)  # Filter the top XXX
+    filter_the_best(fully_sorted_companies, companies_per_sector=10)
     # amount of companies by their RRR Ranking
-    best_filtered_companies = return_all_companies(fully_sorted_companies)  # Takes all companies to provide a more broad scope.
+    best_filtered_companies = return_all_companies(
+        fully_sorted_companies)  # Takes all companies to provide a more broad scope.
     # print(len(best_filtered_companies))
     # print(len(all_companies))
     finished_df, sector = modify_reader_sheet(best_filtered_companies)

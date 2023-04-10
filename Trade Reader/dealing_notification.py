@@ -1,9 +1,11 @@
 # TODO: Add logging into this because it has thrown errors in the console several times, which is no good for anyone.
+# TODO: Move this file into resources and get it to run after the trade reader executes.
+import logging
 import sys
 
-import file_id_reader
-import logging
 import numpy as np
+
+from Resources import file_id_reader
 
 logging.basicConfig(filename='Resources/Trade_reader.log', level=logging.INFO)
 file_checker = file_id_reader.list_all_files(False, '.csv')

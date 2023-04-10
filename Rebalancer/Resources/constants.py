@@ -300,10 +300,10 @@ def all_bucket_deal_to_target(buckets=all_buckets):
             return funds_dict
 
 
-def sector_deal_to_target(bucket_to_ID):
-    if bucket_to_ID in equities_sector():
+def sector_deal_to_target(bucket_to_id):
+    if bucket_to_id in equities_sector():
         return find_equity_sector_dtt()
-    if bucket_to_ID in bonds_sector():
+    if bucket_to_id in bonds_sector():
         return find_bond_sector_dtt()
-    if bucket_to_ID == money_markets_bucket():
+    if bucket_to_id == money_markets_bucket():
         return find_mm_dtt()
