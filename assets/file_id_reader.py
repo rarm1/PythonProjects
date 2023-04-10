@@ -1,6 +1,7 @@
+# TODO: Remove single use values
+# TODO: Refactor to be OO
 import os
 import sys
-from os.path import exists
 
 import openpyxl as xl
 import pandas as pd
@@ -8,58 +9,52 @@ import pandas as pd
 # Variable initalisation.
 global READER_SHEET, MODIFIED_FILENAME
 
-RRR_HEADERS = ["Fund Name", "ISIN", "Average Cap", "Growth to Value Score", "3 Year RRR", "5 Year RRR",
-               "Amount of periods utilised"]
+RRR_HEADERS = ["Fund Name", "ISIN", "IA Sector", "Average Cap", "Growth to Value Score", "3 Year RRR", "5 Year RRR",
+               "Amount of periods utilised", "Up Capture Ratio", "Down Capture Ratio", "Up Down Difference"]
 
 
 # This lists all xlsx files which can be read by the rebalancer.
-def list_all_files(to_print=True, file_type='.xlsx'):
+# TODO: Maybe replace arguments with kwargs.
+def list_all_files(to_print=True, file_type='.xlsx', exclusions: list = None):
     """
-    List all files according to certain criteria.
-    :params:
-    :param to_print: Boolean
-    | Is this function to print out all files found. Can be used when the same list would be printed twice.
-    | This helps avoid clutter in the console.
-    :param file_type: String
-    | The filetype that is to be listed. This can be passed an empty string to return all files in directory.
-    :return: Array
-    """
+	List all files according to certain criteria.
+	:param exclusions: This is a list that takes files that should be excluded. This is going to be for test files,
+	templates, that kind of thing.
+	:params:
+	:param to_print: Boolean
+	| Is this function to print out all files found. Can be used when the same list would be printed twice.
+	| This helps avoid clutter in the console.
+	:param file_type: String
+	| The filetype that is to be listed. This can be passed an empty string to return all files in directory.
+	:return: Array
+	"""
     a = 1
     files_ = []
     for x in os.listdir():
         if (x.endswith(file_type) or x.endswith(file_type)) and not x.startswith('~'):
-            if to_print:
-                print(a, x)
-            files_.append(x)
-            a += 1
+            if x not in exclusions:
+                if to_print:
+                    print(a, x)
+                files_.append(x)
+                a += 1
     return files_
 
 
-def user_selected_file(file_list, doc_type='file', enable_all=True, default_return=False, preselected=None):
+def user_selected_file(file_list, doc_type='file', enable_all=True, default_return=False):
     """
-    Allows the user to return an index for the desired file. doctype allows for printing various file_types.
-    Returns the filename to.
-    :param file_list: Array
-    :param doc_type: String
-    :param enable_all:
-    :param default_return:
-    :param preselected:
-
-    :return: String
-    """
+	Allows the user to return an index for the desired file. doctype allows for printing various file_types.
+	Returns the filename to.
+	:param default_return:
+	:param enable_all:
+	:param file_list: Array
+	:param doc_type:
+	:return:
+	"""
     while True:
-        if preselected is not None:
-            try:
-                int(preselected)
-            except ValueError as e:
-                if not exists(preselected):
-                    raise NameError("Problem with filename", e)
-                else:
-                    return preselected
-            return file_list[preselected]
         if default_return:
             return file_list[0]
-        desired_index = input(f"Input the index of the {doc_type} you'd like to read {'enter a for all files' if enable_all else ''}:")
+        desired_index = input(
+                f"Input the index of the {doc_type} you'd like to read {'enter a for all files' if enable_all else ''}:")
         try:
             desired_index = int(desired_index)
             if len(file_list) + 1 > desired_index > 0:
@@ -75,10 +70,10 @@ def user_selected_file(file_list, doc_type='file', enable_all=True, default_retu
 
 def file_name_generator(filename):
     """
-    Generates all filenames required
-    :param filename: String
-    :return: Funct / String
-    """
+	Generates all filenames required
+	:param filename: String
+	:return: Funct / String
+	"""
     if filename == 'a':
         return list_all_files(False)
     else:
@@ -97,10 +92,16 @@ def find_all_funds():
     funds_started = False
     all_funds = []
     for i in range(1, READER_SHEET.max_row):
-        cell = READER_SHEET.cell(i, 2)
-        if funds_started and cell.value is not None:
-            all_funds.append(cell)
-        if cell.value is not None and cell.value.lower() == 'isin':
+        isin = READER_SHEET.cell(i, 2)
+        ia_sector = READER_SHEET.cell(i, 3)
+        av_cap = READER_SHEET.cell(i, 4).value
+        value_growth = READER_SHEET.cell(i, 5).value
+        up_capture = READER_SHEET.cell(i, 6).value
+        down_capture = READER_SHEET.cell(i, 7).value
+        check_value = [isin, ia_sector, av_cap, value_growth, up_capture, down_capture]
+        if funds_started and None not in check_value:
+            all_funds.append(isin)
+        if isin.value is not None and isin.value.lower() == 'isin':
             funds_started = True
     else:
         return all_funds
@@ -111,7 +112,7 @@ def returns_column():
     return_weeks = []
     for i in range(1, READER_SHEET.max_column):
         cell = READER_SHEET.cell(9, i)
-        if cell.value.lower() == 'return' and returns_started is False:
+        if 'return' in cell.value.lower() and returns_started is False:
             returns_started = True
         elif 'information' in cell.value.lower():
             return_weeks = return_weeks[:-1]
@@ -130,6 +131,8 @@ def five_year_finder_regression():
 
 def excel_writer(fully_sorted_companies, modified_filename):
     with pd.ExcelWriter(modified_filename, engine="openpyxl") as writer:
+        # So, create an array in here of the value small value large etc., then just iterate through fully sorted
+        # companies. This can then have an "if len(fullysorted[i]) != 0 write."
         pd.DataFrame(fully_sorted_companies[0], columns=RRR_HEADERS).to_excel(writer, sheet_name="Value Small Cap",
                                                                               index=False)
         pd.DataFrame(fully_sorted_companies[1], columns=RRR_HEADERS).to_excel(writer, sheet_name="Value Large Cap",
