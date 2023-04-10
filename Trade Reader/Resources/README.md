@@ -9,9 +9,6 @@ This folder contains the necessary project files, as well as a list of rebalance
 folder that also contains populated rebalancers that demonstrate the suggested trades. Completed rebalancers will also
 contain a sheet that contains a list of trades in the same format as the Fund Managers .csv file.
 
-Instructions for this program can be found in the [instructions](INSTRUCTIONS.pdf) document.
-Condensed instructions can be found in the [Execution Instuctions](Execution Instructions.pdf)
-
 This Python project has been broken into several, smaller Python files. This is to increase the ease with which the
 document can be read.
 
