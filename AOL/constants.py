@@ -4,6 +4,10 @@ import docx
 
 
 class Constants:
+	"""
+
+	"""
+	
 	def __init__(self):
 		self.today = datetime.now()
 		self.date_format = date(day=self.today.day, month=self.today.month, year=self.today.year).strftime('%A %d %B '

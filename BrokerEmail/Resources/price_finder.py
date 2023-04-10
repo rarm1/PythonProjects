@@ -7,6 +7,9 @@ from isin_to_ticker import ISINToTicker
 
 
 class Prices:
+	"""
+
+	"""
 	_document = None
 	
 	def __init__(self, requested_tickers, live_pricing: bool = True):
@@ -31,6 +34,12 @@ class Prices:
 				return sell_price, buy_price
 	
 	async def fetch_price_for_ticker(self, ticker, url, currency):
+		"""
+
+		:param ticker:
+		:param url:
+		:param currency:
+		"""
 		sell_price, buy_price = await self._fetch_price_async(url)
 		self.Prices[ticker] = {}
 		if sell_price:
@@ -40,6 +49,10 @@ class Prices:
 		self.Prices[ticker]["Currency"] = currency
 	
 	async def set_prices_async(self, requested_tickers):
+		"""
+
+		:param requested_tickers:
+		"""
 		unique_tickers = set(requested_tickers)
 		self.urls = ISINToTicker(tickers=unique_tickers).urls
 		tasks = [
@@ -49,6 +62,10 @@ class Prices:
 		await asyncio.gather(*tasks)
 	
 	def set_prices(self, requested_tickers):
+		"""
+
+		:param requested_tickers:
+		"""
 		asyncio.run(self.set_prices_async(requested_tickers))
 	
 	def default_prices(self, requested_tickers):

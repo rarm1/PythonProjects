@@ -7,6 +7,10 @@ from email.mime.text import MIMEText
 
 
 class Email:
+	"""
+
+	"""
+	
 	def __init__(self):
 		self.recipient_list = ['fundmanagers@margetts.com']
 		self.subject = "Margetts Fund Management: Progeny Trades"
@@ -14,6 +18,10 @@ class Email:
 	
 	@staticmethod
 	def morning_afternoon():
+		"""
+
+		:return:
+		"""
 		now = datetime.now()
 		if now.hour < 12:
 			return "Good Morning"
@@ -21,6 +29,12 @@ class Email:
 			return "Good Afternoon"
 	
 	def write_email(self, trade_table, proof_table):
+		"""
+
+		:param trade_table:
+		:param proof_table:
+		:return:
+		"""
 		body = f"{self.Salutation}, <br><br>" \
 		       f"We would like to place the following trades please,<b> these are to settle T+4</b>.<br><br>" \
 		       f"{trade_table}<br><br>" \
@@ -31,11 +45,16 @@ class Email:
 		return body
 	
 	def save_email(self, trade_table, proof_table):
+		"""
+
+		:param trade_table:
+		:param proof_table:
+		"""
 		msg = MIMEMultipart()
 		msg['Subject'] = self.subject
 		msg['To'] = "; ".join(self.recipient_list)
 		body = self.write_email(trade_table, proof_table)
 		part = MIMEText(body, 'html')
 		msg.attach(part)
-		with open("BrokerTest.eml", 'w') as outfile:
+		with open("../BrokerTest.eml", 'w') as outfile:
 			outfile.write(msg.as_string())

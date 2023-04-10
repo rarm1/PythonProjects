@@ -13,9 +13,18 @@ INTERNATIONAL = ['IAS', 'INS', 'INT']
 
 
 def find_the_file():
+	"""
+
+	:return:
+	"""
 	date_arr = []
 	
 	def date_convert(in_date):
+		"""
+
+		:param in_date:
+		:return:
+		"""
 		try:
 			return datetime.strptime(in_date, '%d%m%y')
 		except ValueError:
@@ -36,6 +45,11 @@ def find_the_file():
 	files_from_date = [file for file in sorted_arr[0:10] if file[1][0:6] == latest_date]
 	
 	def sort_by_time(arr):
+		"""
+
+		:param arr:
+		:return:
+		"""
 		return arr[1][7:11]
 	
 	sorted_arr = sorted(files_from_date, key=sort_by_time, reverse=True)[0:2]
@@ -52,6 +66,10 @@ def find_the_file():
 
 
 def check_cashflows():
+	"""
+
+	:return:
+	"""
 	document = FILE
 	overweight_share_class = []
 	for row in range(1, document.max_row):
@@ -66,6 +84,11 @@ def check_cashflows():
 
 
 def convert_back_to_cells(asset_code_arr):
+	"""
+
+	:param asset_code_arr:
+	:return:
+	"""
 	# So I think in this function I basically want to convert from the asset code array (not RR)
 	for i, asset_code in enumerate(asset_code_arr):
 		for row in range(1, FILE.max_row):
@@ -77,6 +100,12 @@ def convert_back_to_cells(asset_code_arr):
 
 
 def fund_difference_finder(given_range, range_name):
+	"""
+
+	:param given_range:
+	:param range_name:
+	:return:
+	"""
 	# TODO: For each fund in the given range, find the difference. i.e. for fund in given range, for each fund in file
 	total_units = 0
 	unit_movement = 0
@@ -98,6 +127,11 @@ def fund_difference_finder(given_range, range_name):
 
 
 def limited_shareclass_info(arr):
+	"""
+
+	:param arr:
+	:return:
+	"""
 	asset_code_arr = [i.offset(0, -1).value for i in arr]
 	rr_diffs = []
 	for asset_code in asset_code_arr:
@@ -127,6 +161,11 @@ def limited_shareclass_info(arr):
 
 
 def portfolio_weighting_calculator(overweight_classes):
+	"""
+
+	:param overweight_classes:
+	:return:
+	"""
 	overweight_portfolios = []
 	# TODO: Would it make more sense to append to overweight portfolios here, and reduce the size of the arr here too?
 	# overweight_classes, risk_rated_portfolios = limited_shareclass_info(overweight_classes)
@@ -152,6 +191,9 @@ def portfolio_weighting_calculator(overweight_classes):
 
 
 def main():
+	"""
+
+	"""
 	global FILE
 	filename = find_the_file()
 	print(f'File read: {filename}')

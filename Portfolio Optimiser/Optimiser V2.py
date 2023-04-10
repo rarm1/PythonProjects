@@ -29,7 +29,7 @@ gv_df = df.iloc[[2]]
 df.drop(df.index[[0, 1, 2]], inplace=True, axis=0)
 df.rename_axis(mapper=None, axis=1, inplace=True)
 df = df.astype(float)
-df = df / 100
+df /= 100
 covmat = df.cov()
 
 sector.drop(sector.index[[0, 1, 2]], inplace=True)
@@ -79,6 +79,11 @@ PORT_NAMES = ['Small Value', 'Small Core', 'Small Growth',
 
 # The idea of this function is that it should aim for the lowest level of correlation between the funds.
 def correlation_func(weights):
+	"""
+
+	:param weights:
+	:return:
+	"""
 	global iteration_count
 	iteration_count += 1
 	print(f"\rGrowth Value Bracket: {PORT_NAMES[GV_BEING_RUN]}. Iteration number: {iteration_count}", end="")
@@ -86,6 +91,11 @@ def correlation_func(weights):
 
 
 def weightings_contraint(weights: list) -> float:
+	"""
+
+	:param weights:
+	:return:
+	"""
 	if np.sum(weights) - 1.00 == 0.00:  # If the sum of float value minus one is 0 then we're at a 'full' portfolio.
 		return 0.0
 	else:
@@ -93,14 +103,30 @@ def weightings_contraint(weights: list) -> float:
 
 
 def growth_value_contraint(weights: list) -> np.ndarray:
+	"""
+
+	:param weights:
+	:return:
+	"""
 	return np.dot(weights, gv_df.T)
 
 
 def cap_constraint(weights):
+	"""
+
+	:param weights:
+	:return:
+	"""
 	return np.dot(weights, cap_df.T)
 
 
 def optimise(target_gvs, target_cap):
+	"""
+
+	:param target_gvs:
+	:param target_cap:
+	:return:
+	"""
 	global GV_BEING_RUN
 	lb, ub = 0.0, 0.1
 	bounds = (lb, ub)
@@ -126,6 +152,10 @@ def optimise(target_gvs, target_cap):
 
 
 def port_generator():
+	"""
+
+	:return:
+	"""
 	all_ports_ex_zero = []
 	all_ports_inc_zero = []
 	for gv_target in growth_value_bounds:
@@ -150,11 +180,16 @@ def port_generator():
 
 
 def time_series(suggested_portfolio):
+	"""
+
+	:param suggested_portfolio:
+	:return:
+	"""
 	fund_names = [fund_name[0] for fund_name in suggested_portfolio]
 	portfolio_df = df[fund_names].copy()
 	for fund_name, weighting_str in suggested_portfolio:
 		weighting = float(weighting_str) / 100
-		portfolio_df[fund_name] = portfolio_df[fund_name] * weighting
+		portfolio_df[fund_name] *= weighting
 	starting_point = 1
 	time_series_suggested_port = [starting_point]
 	weekly_returns = []
@@ -167,6 +202,10 @@ def time_series(suggested_portfolio):
 
 
 def write_returns_graph(weekly_returns):
+	"""
+
+	:param weekly_returns:
+	"""
 	img_data = io.BytesIO()
 	plt.plot(np.array(sector_time_series), c='blue', label='Sector')
 	plt.plot(np.array(weekly_returns), c='red', label='Suggested Portfolio')
@@ -178,6 +217,11 @@ def write_returns_graph(weekly_returns):
 
 
 def write_weightings_graph(data, labels):
+	"""
+
+	:param data:
+	:param labels:
+	"""
 	img_data = io.BytesIO()
 	plt.pie(data, labels=labels)
 	plt.title('Holdings')
@@ -187,6 +231,10 @@ def write_weightings_graph(data, labels):
 
 
 def maths_functions(df1: pandas.DataFrame):
+	"""
+
+	:param df1:
+	"""
 	WORKSHEET.write(0, 5, "Sharpe Ratio")
 	# WORKSHEET.write(1, 5, opt_lib.sharpe_ratio(df1))
 	#
@@ -211,6 +259,10 @@ def maths_functions(df1: pandas.DataFrame):
 
 
 def function_main():
+	"""
+
+	:return:
+	"""
 	global WORKSHEET, GENERATED_PORTFOLIO_RETURNS_DF
 	all_ports_ex_zero = port_generator()
 	all_returns_arr = []
@@ -243,6 +295,9 @@ def function_main():
 
 
 def main():
+	"""
+
+	"""
 	all_returns_arr = function_main()
 	worksheet = workbook.add_worksheet("Portfolio Comparison")
 	img_data = io.BytesIO()

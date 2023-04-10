@@ -26,6 +26,10 @@ logging.basicConfig(filename="LoggingFile.log", level=logging.ERROR,
 # This function should maybe be tweaked so that all transactions
 # Are recorded, but not all transactions create holding periods. #
 def deal_type_col_finder():
+	"""
+
+	:return:
+	"""
 	for i in range(1, TRANSACTIONS_SHEET.max_column):
 		cell = TRANSACTIONS_SHEET.cell(1, i)
 		if cell.value == 'TradeType':
@@ -35,6 +39,11 @@ def deal_type_col_finder():
 
 
 def check_transaction_type(transaction):
+	"""
+
+	:param transaction:
+	:return:
+	"""
 	deal_type = TRANSACTIONS_SHEET.cell(row=transaction.row, column=deal_type_col_finder())
 	# I don't think we want this here, we need the transaction in to give a realistic report of holding return.
 	if deal_type == "To be Ignored":
@@ -96,8 +105,12 @@ def get_transaction_dates():
 
 
 def get_transaction_sheet():
+	"""
+
+	:return:
+	"""
 	global TRANSACTION_FILENAME
-	all_file_list = file_id_reader.list_all_files(True, '.xlsx')
+	all_file_list = file_id_reader.list_all_files()
 	transactions_filename = file_id_reader.user_selected_file(all_file_list)
 	TRANSACTION_FILENAME = transactions_filename
 	transactions_file = openpyxl.load_workbook(transactions_filename, data_only=True)
@@ -105,6 +118,10 @@ def get_transaction_sheet():
 
 
 def find_fund_column():
+	"""
+
+	:return:
+	"""
 	for i in range(1, TRANSACTIONS_SHEET.max_column):
 		cell = TRANSACTIONS_SHEET.cell(row=1, column=i)
 		if cell.value == "Share_Class_Name_Long":
@@ -112,6 +129,11 @@ def find_fund_column():
 
 
 def list_of_funds_generator(fund_column):
+	"""
+
+	:param fund_column:
+	:return:
+	"""
 	fund_list = []
 	for i in range(2, TRANSACTIONS_SHEET.max_row + 1):
 		cell = TRANSACTIONS_SHEET.cell(row=i, column=fund_column)
@@ -121,6 +143,11 @@ def list_of_funds_generator(fund_column):
 
 
 def dictionary_creator(tidy_fund_list):
+	"""
+
+	:param tidy_fund_list:
+	:return:
+	"""
 	return_dictionary = {}
 	for i in tidy_fund_list:
 		return_dictionary[i] = 0
@@ -128,6 +155,10 @@ def dictionary_creator(tidy_fund_list):
 
 
 def units_column_finder():
+	"""
+
+	:return:
+	"""
 	for col in range(1, TRANSACTIONS_SHEET.max_column):
 		cell = TRANSACTIONS_SHEET.cell(row=1, column=col)
 		if cell.value is not None and cell.value.lower() == 'units':
@@ -135,6 +166,10 @@ def units_column_finder():
 
 
 def consideration_col_finder():
+	"""
+
+	:return:
+	"""
 	for col in range(1, TRANSACTIONS_SHEET.max_column):
 		cell = TRANSACTIONS_SHEET.cell(row=1, column=col)
 		if cell.value is not None and cell.value.lower() == 'consideration':
@@ -142,6 +177,10 @@ def consideration_col_finder():
 
 
 def cost_to_holder_col_finder():
+	"""
+
+	:return:
+	"""
 	for col in range(1, TRANSACTIONS_SHEET.max_column):
 		cell = TRANSACTIONS_SHEET.cell(row=1, column=col)
 		if cell.value is not None and cell.value.lower() == 'costtoholder':
@@ -149,6 +188,12 @@ def cost_to_holder_col_finder():
 
 
 def unit_finder(fund_dictionary, transaction_date):
+	"""
+
+	:param fund_dictionary:
+	:param transaction_date:
+	:return:
+	"""
 	fund_dictionary['Cost_to_holder'] = 0
 	fund_dictionary['Transaction_Costs'] = 0
 	fund_dictionary['TradeType'] = str()
@@ -183,6 +228,10 @@ def unit_finder(fund_dictionary, transaction_date):
 
 
 def all_funds_held():
+	"""
+
+	:return:
+	"""
 	fund_column = find_fund_column()
 	find_aggregate_list_of_funds = list_of_funds_generator(fund_column)
 	tidy_fund_list = remove_duplicates(find_aggregate_list_of_funds)
@@ -191,8 +240,11 @@ def all_funds_held():
 
 
 def get_prices_sheet():
+	"""
+
+	"""
 	global PRICES_SHEET
-	prices_filename = file_id_reader.user_selected_file(file_id_reader.list_all_files(True, '.csv'), "prices")
+	prices_filename = file_id_reader.user_selected_file(file_id_reader.list_all_files(file_type='.csv'), "prices")
 	pandas_pricing = pd.read_csv(prices_filename, dtype=str, usecols=[0, 1, 2, 3, 4])
 	pandas_pricing.dropna(inplace=True)
 	PRICES_SHEET = np.array(pandas_pricing)
@@ -200,6 +252,10 @@ def get_prices_sheet():
 
 # Here we will attempt to create a list of dictionaries.
 def unit_series_calculator():
+	"""
+
+	:return:
+	"""
 	global FUNDS_HELD
 	new_array = []
 	blank_dict = {}
@@ -214,6 +270,11 @@ def unit_series_calculator():
 
 
 def sum_all_hps(time_series):
+	"""
+
+	:param time_series:
+	:return:
+	"""
 	dict_to_return = {}
 	transaction_costs, cost_to_holder, trade_type = [], [], []
 	for idx, holding_period in enumerate(time_series):
@@ -234,6 +295,11 @@ def sum_all_hps(time_series):
 
 
 def convert_units_to_values(units):
+	"""
+
+	:param units:
+	:return:
+	"""
 	to_ignore = ['cost_to_holder', 'transaction_costs', 'trade_type']
 	for idx, holding_period in enumerate(units):
 		transaction_date = TRANSACTION_DATES[idx]
@@ -273,6 +339,14 @@ def convert_units_to_values(units):
 
 # This is a custom binary search function. Praise me.
 def binary_search(array, low, high, x):
+	"""
+
+	:param array:
+	:param low:
+	:param high:
+	:param x:
+	:return:
+	"""
 	if high >= low:
 		mid_point = (high + low) // 2
 		try:
@@ -289,6 +363,10 @@ def binary_search(array, low, high, x):
 
 
 def user_date_getter():
+	"""
+
+	:return:
+	"""
 	global TRANSACTION_DATES
 	while True:
 		try:
@@ -308,51 +386,58 @@ def user_date_getter():
 
 
 def user_transactions_getter(user_start_date, unit_time_series):
+	"""
+
+	:param user_start_date:
+	:param unit_time_series:
+	:return:
+	"""
 	global TRANSACTION_DATES
 	# If transaction dates are to be added, rather than all transactions to be used, then this will require further
 	#   Development
 	if user_start_date.lower() == "all":
 		return unit_time_series
-	
-	# except AttributeError as e:
-	#     logging.error(e, exc_info=True)
-	
-	# transaction_date = date_conversion(date)
-	# if idx == len(TRANSACTION_DATES) - 1:
-	#     print("THIS IS HIT 1")
-	#     user_requested_dates.append(date)
-	#     user_requested_values.append(unit_time_series[idx])
-	#     break
-	#
-	# if user_start_date < transaction_date and idx == 0:
-	#     sys.exit(f"This means that the date requested as the start date: {user_start_date} was before the first "
-	#              f"transaction recorded, which is: {date}")
-	# if user_start_date <= transaction_date <= user_end_date:
-	#     print("THIS IS HIT 2")
-	#     user_requested_dates.append(date)
-	#     user_requested_values.append(unit_time_series[idx])
-	# try:
-	#     if transaction_date < user_end_date < TRANSACTION_DATES[idx + 1]:
-	#         print("THIS IS HIT 3")
-	#         user_requested_dates.append(user_end_date)
-	#         user_requested_values.append(unit_time_series[idx - 1])
-	#         break
-	# except IndexError:
-	#     logging.error(IndexError, exc_info=True)
-	# if transaction_date < user_start_date:
-	#     try:
-	#         print("THIS IS HIT 4")
-	#         user_requested_dates[0] = user_start_date
-	#         user_requested_values[0] = unit_time_series[idx]
-	#     except IndexError as ie:
-	#         logging.error(ie, exc_info=True)
-	#         user_requested_dates.append(user_start_date)
-	#         user_requested_values.append(unit_time_series[idx])
-	# if user_end_date < transaction_date:
-	#     print("THIS IS HIT 6")
-	#     user_requested_dates.append(date)
-	#     user_requested_values.append(unit_time_series[idx])
-	#     break
+
+
+# except AttributeError as e:
+#     logging.error(e, exc_info=True)
+
+# transaction_date = date_conversion(date)
+# if idx == len(TRANSACTION_DATES) - 1:
+#     print("THIS IS HIT 1")
+#     user_requested_dates.append(date)
+#     user_requested_values.append(unit_time_series[idx])
+#     break
+#
+# if user_start_date < transaction_date and idx == 0:
+#     sys.exit(f"This means that the date requested as the start date: {user_start_date} was before the first "
+#              f"transaction recorded, which is: {date}")
+# if user_start_date <= transaction_date <= user_end_date:
+#     print("THIS IS HIT 2")
+#     user_requested_dates.append(date)
+#     user_requested_values.append(unit_time_series[idx])
+# try:
+#     if transaction_date < user_end_date < TRANSACTION_DATES[idx + 1]:
+#         print("THIS IS HIT 3")
+#         user_requested_dates.append(user_end_date)
+#         user_requested_values.append(unit_time_series[idx - 1])
+#         break
+# except IndexError:
+#     logging.error(IndexError, exc_info=True)
+# if transaction_date < user_start_date:
+#     try:
+#         print("THIS IS HIT 4")
+#         user_requested_dates[0] = user_start_date
+#         user_requested_values[0] = unit_time_series[idx]
+#     except IndexError as ie:
+#         logging.error(ie, exc_info=True)
+#         user_requested_dates.append(user_start_date)
+#         user_requested_values.append(unit_time_series[idx])
+# if user_end_date < transaction_date:
+#     print("THIS IS HIT 6")
+#     user_requested_dates.append(date)
+#     user_requested_values.append(unit_time_series[idx])
+#     break
 
 
 # user_requested_values, user_requested_dates = [], []
@@ -363,6 +448,9 @@ def user_transactions_getter(user_start_date, unit_time_series):
 
 
 def main():
+	"""
+
+	"""
 	global TRANSACTION_DATES, FUNDS_HELD
 	TRANSACTION_DATES = get_transaction_dates()
 	get_prices_sheet()

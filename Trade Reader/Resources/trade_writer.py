@@ -78,6 +78,11 @@ REQ_DATE = TODAY.strftime("%d/%m/%Y")
 
 
 def units_to_trade(trade):
+	"""
+
+	:param trade:
+	:return:
+	"""
 	try:
 		price_per_unit = abs(trade.offset(0, -6).value) / abs(trade.offset(0, -5).value)
 	except ZeroDivisionError:
@@ -89,6 +94,12 @@ def units_to_trade(trade):
 
 
 def get_trade_data(trade, idx):
+	"""
+
+	:param trade:
+	:param idx:
+	:return:
+	"""
 	sec_name = trade.offset(0, -7).value
 	isin = trade.offset(0, -9).value
 	deal_type = _trade_type(trade)
@@ -100,10 +111,20 @@ def get_trade_data(trade, idx):
 
 
 def is_broker_trade(notes):
+	"""
+
+	:param notes:
+	:return:
+	"""
 	return "broker" in notes.lower() or "etf" in notes.lower()
 
 
 def get_liberum_account_number(designation):
+	"""
+
+	:param designation:
+	:return:
+	"""
 	liberum_account_number = str()
 	for idx, row in LIBERUM_ACCOUNT_NUMBERS_DF.iterrows():
 		if designation in row['Designation']:
@@ -112,6 +133,15 @@ def get_liberum_account_number(designation):
 
 
 def get_broker_trade_details(trade, sec_name, isin, trade_id, notes):
+	"""
+
+	:param trade:
+	:param sec_name:
+	:param isin:
+	:param trade_id:
+	:param notes:
+	:return:
+	"""
 	total_units_to_trade = units_to_trade(trade)
 	total_units = trade.offset(0, -5).value
 	try:
@@ -133,6 +163,17 @@ def get_broker_trade_details(trade, sec_name, isin, trade_id, notes):
 
 
 def get_regular_trade_details(sec_name, isin, trade_id, trade, deal_type, trade_value, notes):
+	"""
+
+	:param sec_name:
+	:param isin:
+	:param trade_id:
+	:param trade:
+	:param deal_type:
+	:param trade_value:
+	:param notes:
+	:return:
+	"""
 	return [FUND_MANAGER, trade_id, REQ_DATE, scheme_lookup().value, sec_name,
 	        isin, new_buy_finder(trade), buy_or_sell(trade), deal_type, trade_value,
 	        currency_finder(trade), "N", notes, READER_SHEET.cell(2, 2).value,
@@ -140,6 +181,12 @@ def get_regular_trade_details(sec_name, isin, trade_id, trade, deal_type, trade_
 
 
 def trade_array_generator(idx, trade):
+	"""
+
+	:param idx:
+	:param trade:
+	:return:
+	"""
 	sec_name, isin, deal_type, trade_value, trade_id, notes = get_trade_data(trade, idx)
 	
 	# if is_broker_trade(notes):
@@ -151,6 +198,9 @@ def trade_array_generator(idx, trade):
 
 # This requests the name of the fund manager from the user and uses this to write to the csv.
 def fundmanager_selection():
+	"""
+
+	"""
 	global FUND_MANAGER
 	# The use of enumerate here allows for easier visualisation of the array for the user.
 	# without using this function the list would start at '0' which is much less natural for most potential users. #
@@ -171,6 +221,10 @@ def fundmanager_selection():
 # This finds the scheme loopup reference document. This document, again, is located in a central place, such that it can
 # be updated. Provided the layout, and name of the file is the same, then it can be changed without modifying any code.
 def scheme_lookup():
+	"""
+
+	:return:
+	"""
 	rebalancer_scheme = READER_SHEET.cell(4, 2)
 	for x in range(1, SCHEME_SHEET.max_row + 1):
 		lookup_designation = (SCHEME_SHEET.cell(x, 3))
@@ -181,6 +235,11 @@ def scheme_lookup():
 
 
 def ticker_lookup(isin):
+	"""
+
+	:param isin:
+	:return:
+	"""
 	for i in range(1, ISIN_TO_TICKER_SHEET.max_row + 1):
 		isin_in_lookup = ISIN_TO_TICKER_SHEET.cell(i, 1)
 		if isin_in_lookup.value is not None:
@@ -218,6 +277,10 @@ def buy_or_sell(trade):
 # This is the trade identifier that is generated in the constants file.
 # The reason that this file is centralised is that it reduces duplicate trade errors.
 def get_trade_identifier():
+	"""
+
+	:return:
+	"""
 	trade_counter_doc = xl.load_workbook(TRADE_ID_FILE)
 	trade_sheet = trade_counter_doc[TRADE_ID_SHEET]
 	return trade_sheet.cell(1, 1).value
@@ -359,6 +422,10 @@ def automated_trading_array_generator(trade_array):
 # This updates the trade number after ever rebalancer that has been read. This adds a stable point in which to rewrite.
 # And doesn't give the user a chance to write trades, and then escape the program without updating the trade quantity.
 def write_trade_value(trade):
+	"""
+
+	:param trade:
+	"""
 	trade_counter_doc = xl.load_workbook(TRADE_ID_FILE)
 	trade_sheet = trade_counter_doc[TRADE_ID_SHEET]
 	trade_sheet.cell(1, 1).value = trade

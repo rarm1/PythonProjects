@@ -35,6 +35,9 @@ class BrokerOutput:
 		self.define_attributes()
 	
 	def define_attributes(self):
+		"""
+
+		"""
 		self.set_action()
 		self.set_security()
 		self.set_isin()
@@ -49,41 +52,71 @@ class BrokerOutput:
 	# self.apply_urls()
 	
 	def set_security(self):
+		"""
+
+		"""
 		self.instructionoutput['Security'] = self.document[self.column_map["Security"]]
 	
 	def set_action(self):
+		"""
+
+		"""
 		self.instructionoutput['Action'] = self.document['Direction']
 	
 	def set_isin(self):
+		"""
+
+		"""
 		self.instructionoutput['ISIN'] = self.document[self.column_map["ISIN"]]
 	
 	def set_ticker(self):
+		"""
+
+		"""
 		isin_to_ticker = ISINToTicker(isin=self.instructionoutput['ISIN'])
 		self.instructionoutput['Ticker'] = isin_to_ticker.tickers
 		self.tickers = self.instructionoutput['Ticker']
 	
 	def set_shares(self):
+		"""
+
+		"""
 		self.instructionoutput['Shares'] = self.document[self.column_map["Shares"]]
 		self.share_quantities = self.instructionoutput['Shares']
 	
 	def set_price_per_share(self):
+		"""
+
+		"""
 		prices = Prices(self.tickers)
 		self.Tickers_Dict = prices.Prices
 	
 	def set_currency(self):
+		"""
+
+		"""
 		currency_template = ['GBP' for _ in range(len(self.instructionoutput['Approx. Notional Value']))]
 		self.instructionoutput['Currency'] = currency_template
 	
 	def set_allocation(self):
+		"""
+
+		"""
 		pid_lookup = PIDLookup(self.document['SchemeID'])
 		self.instructionoutput['Allocation'] = pid_lookup.designation_lookup
 	
 	# self.output['Allocation'] = self.document[self.column_map["Allocation"]]
 	
 	def set_trade_id(self):
+		"""
+
+		"""
 		self.instructionoutput['Margetts Trade Reference'] = self.document[self.column_map["TradeID"]]
 	
 	def apply_prices(self):
+		"""
+
+		"""
 		for index, row in self.instructionoutput.iterrows():
 			ticker = row['Ticker']
 			shares = row['Shares']

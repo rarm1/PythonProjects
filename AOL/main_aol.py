@@ -28,6 +28,12 @@ def allowable_execution(row: int) -> object:
 
 # Func looks through every paragraph then takes each run and looks for the template opener
 def create_new_document(filepath, fund, agent):
+	"""
+
+	:param filepath:
+	:param fund:
+	:param agent:
+	"""
 	search = []
 	constants = Constants()
 	doc_to_read = docx.Document(filepath)
@@ -70,6 +76,10 @@ def create_new_document(filepath, fund, agent):
 
 
 def process_fund(row):
+	"""
+
+	:param row:
+	"""
 	if allowable_execution(row):
 		print(f"Iteration: {row - 1}")
 		fund = FundDetails(row)
@@ -105,6 +115,9 @@ def process_fund(row):
 
 
 def main():
+	"""
+
+	"""
 	input_document = InputDocument()
 	input_sheet = input_document.Reader_Sheet
 	for row in range(2, input_sheet.max_row + 1):

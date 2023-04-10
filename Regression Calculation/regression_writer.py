@@ -12,6 +12,10 @@ global DOCUMENT
 
 # Removes all variables that are NA - important for display and processing
 def array_sort():
+	"""
+
+	:return:
+	"""
 	# print(DOCUMENT.iloc[0:20, 3:10])
 	performance_dataframe = DOCUMENT.iloc[7:, 3:10].dropna()
 	five_year_returns = DOCUMENT.iloc[7:, 10].dropna()
@@ -43,6 +47,12 @@ def excel_printer(to_write):
 
 # This uses the 'statsmodel.api' library for ease.
 def reg_coeff_calc(x, y):
+	"""
+
+	:param x:
+	:param y:
+	:return:
+	"""
 	# When reading from Excel the default datatype is not compatible with the 'stats' library. This converts it.
 	x = x.astype('float64')
 	y = y.astype('float64')
@@ -63,6 +73,12 @@ def reg_coeff_calc(x, y):
 
 # All of these results are accessible from the statsmodel library.
 def create_variance_dataframe(results, header):
+	"""
+
+	:param results:
+	:param header:
+	:return:
+	"""
 	df = pd.DataFrame({
 		"Benchmark": header,
 		'f_values': results.fvalue,
@@ -76,6 +92,11 @@ def create_variance_dataframe(results, header):
 
 # This creates arrays that're easier to work with using the 'stats' module.
 def benchmark_iterator(input_):
+	"""
+
+	:param input_:
+	:return:
+	"""
 	# This sets Y to the returns column, which is passed as a list within a list of lists.
 	y = input_[1]
 	# The headers are imported from the document.
@@ -93,8 +114,11 @@ def benchmark_iterator(input_):
 
 
 def main():
+	"""
+
+	"""
 	global DOCUMENT
-	all_files = file_id_reader.list_all_files(True)
+	all_files = file_id_reader.list_all_files()
 	if len(all_files) == 0:
 		sys.exit("Please ensure that there are files ending in .xlsx within the project folder.")
 	filename_user = file_id_reader.user_selected_file(all_files)

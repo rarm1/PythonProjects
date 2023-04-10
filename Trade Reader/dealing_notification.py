@@ -13,7 +13,7 @@ if len(file_checker) == 1:
 	file = np.recfromcsv(file_checker[0], encoding=None)
 else:
 	print("Please select the 'unchecked' file.")
-	ALL_FILES = file_id_reader.list_all_files(True, '.csv')
+	ALL_FILES = file_id_reader.list_all_files(file_type='.csv')
 	FILENAME_USER = file_id_reader.user_selected_file(ALL_FILES, enable_all=False)
 	FILENAMES = file_id_reader.file_name_generator(FILENAME_USER)
 	file = np.recfromcsv(FILENAMES[0], encoding=None)

@@ -32,6 +32,10 @@ class ISINToTicker:
 	
 	@property
 	def thirty_rolling_avg(self):
+		"""
+
+		:return:
+		"""
 		return self._find_30d()
 	
 	@classmethod
@@ -40,9 +44,9 @@ class ISINToTicker:
 		Reads the ISIN_to_Ticker.csv file and returns a pandas DataFrame.
 		"""
 		if cls._document is None:
-			with open('ISIN_to_Ticker.csv', 'rb') as f:
+			with open('../ISIN_to_Ticker.csv', 'rb') as f:
 				result = chardet.detect(f.read())
-			cls._document = pd.read_csv("ISIN_to_Ticker.csv", encoding=result['encoding'])  #
+			cls._document = pd.read_csv("../ISIN_to_Ticker.csv", encoding=result['encoding'])  #
 		return cls._document
 	
 	def _find_ticker(self):

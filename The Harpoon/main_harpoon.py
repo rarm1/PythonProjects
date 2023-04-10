@@ -20,8 +20,12 @@ global DOCUMENT, VAR_DICT, FILENAME
 
 
 def obtain_file():
+	"""
+
+	:return:
+	"""
 	global FILENAME
-	all_files = file_id_reader.list_all_files(True, exclusions=["Comparison Template.xlsx"])
+	all_files = file_id_reader.list_all_files(exclusions=["Comparison Template.xlsx"])
 	filename_user = file_id_reader.user_selected_file(all_files)
 	filename = file_id_reader.file_name_generator(filename_user)[0]
 	FILENAME = filename
@@ -30,6 +34,9 @@ def obtain_file():
 
 
 def variable_definitions():
+	"""
+
+	"""
 	global VAR_DICT
 	var_sheet = DOCUMENT['Variables']
 	variable_cell_list = [var_sheet.cell(row=a, column=1) for a in range(2, var_sheet.max_row + 1) if var_sheet.cell(
@@ -38,6 +45,9 @@ def variable_definitions():
 
 
 def harpoon():
+	"""
+
+	"""
 	global DOCUMENT
 	DOCUMENT = obtain_file()
 	variable_definitions()
@@ -80,6 +90,11 @@ def harpoon():
 
 
 def higher_lower_calc(var):
+	"""
+
+	:param var:
+	:return:
+	"""
 	margetts_weight, clients_weight = VAR_DICT["margetts" + var[var.find('_'):-13]], VAR_DICT["client" + var[var.find(
 			'_'):-13]]
 	var1, var2 = [clients_weight, margetts_weight] if 'client' in var.lower() else [margetts_weight, clients_weight]
@@ -91,6 +106,10 @@ def higher_lower_calc(var):
 
 
 def annualised_calc():
+	"""
+
+	:return:
+	"""
 	perf_comp = DOCUMENT['Performance Comparison']
 	target_cells = []
 	start = False
@@ -135,6 +154,11 @@ def annualised_calc():
 # FIXME: if float(num) == float(int(num)): return int(num) else: return float(num)
 
 def performance_reporting(variable_input):
+	"""
+
+	:param variable_input:
+	:return:
+	"""
 	if "annualised_perf" in variable_input:
 		return annualised_calc()
 	elif "relative" not in variable_input:
@@ -161,6 +185,11 @@ def performance_reporting(variable_input):
 
 
 def date_suffix(var):
+	"""
+
+	:param var:
+	:return:
+	"""
 	dictionary = {
 		'st': [1, 21, 31],
 		'nd': [2, 22],
@@ -174,6 +203,10 @@ def date_suffix(var):
 
 
 def client_risk_comparison():
+	"""
+
+	:return:
+	"""
 	sheet = DOCUMENT['Portfolio Comparison']
 	try:
 		col_index = [i for i, cell in enumerate(sheet[1]) if cell.value == "Risk Score"][0]
@@ -191,6 +224,11 @@ def client_risk_comparison():
 
 
 def paragraph_writer(sheetname):
+	"""
+
+	:param sheetname:
+	:return:
+	"""
 	intro_sheet = DOCUMENT[sheetname]
 	paragraph = []
 	for a, var in enumerate(intro_sheet.iter_rows(min_row=2, max_col=1, values_only=True), intro_sheet.max_row + 1):

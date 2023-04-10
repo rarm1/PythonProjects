@@ -12,6 +12,10 @@ class Agency:
 		self.fetch_vars(row)
 	
 	def fetch_vars(self, row):
+		"""
+
+		:param row:
+		"""
 		self.Agency_Code = self.Reader_Sheet.cell(row=row, column=self.Constants.AgentCodeColumn).value
 		if self.Agency_Code is not None:
 			self.Agency_Code = "Agency Code: " + str(self.Agency_Code)

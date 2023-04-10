@@ -8,6 +8,10 @@ pd.set_option('display.max_rows', None)
 
 
 class ProofingTable:
+	"""
+
+	"""
+	
 	def __init__(self, class_input):
 		self.tickers = []
 		self.tickers_dict = {}
@@ -25,23 +29,38 @@ class ProofingTable:
 		self.set_urls()
 	
 	def set_tickers(self):
+		"""
+
+		"""
 		self.tickers = self.broker_df['Ticker'].unique()
 		self.ProofDataFrame['Ticker'] = self.tickers
 	
 	def set_30d_avg(self):
+		"""
+
+		"""
 		self.ProofDataFrame['30 day rolling average'] = self.isin_to_ticker.thirty_rolling_avg
 		self.ProofDataFrame['30 day rolling average'] = \
 			self.ProofDataFrame['30 day rolling average'].str.replace(",", "").astype(float)
 	
 	def get_agg_traded(self):
+		"""
+
+		"""
 		ticker_sums = self.broker_df.groupby('Ticker')['Shares'].sum()
 		self.tickers_dict = {ticker: value for ticker, value in ticker_sums.items()}
 	
 	def set_agg_traded(self):
+		"""
+
+		"""
 		for ticker in self.tickers:
 			self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, 'Shares'] = self.tickers_dict[ticker]
 	
 	def set_pct_traded(self):
+		"""
+
+		"""
 		for ticker in self.tickers:
 			self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, '% Traded'] = round(
 					self.tickers_dict[ticker] / self.ProofDataFrame.loc[
@@ -53,11 +72,17 @@ class ProofingTable:
 					str) + '%'
 	
 	def set_price_per_share(self):
+		"""
+
+		"""
 		for ticker in self.tickers:
 			self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, 'Price per Share'] = \
 				self.class_input.Tickers_Dict[ticker][
 					'Directional Price']
 	
 	def set_urls(self):
+		"""
+
+		"""
 		for ticker, url, _ in self.isin_to_ticker.urls:
 			self.ProofDataFrame.loc[self.ProofDataFrame['Ticker'] == ticker, 'URL'] = url

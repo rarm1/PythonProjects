@@ -21,6 +21,10 @@ TRADE_SHEET_HEADERS = ['Transaction Date', 'Share_Class_Name_Long', 'AccInc', 'D
 
 
 def adjustment_cash_cell_finder():
+	"""
+
+	:return:
+	"""
 	for a in range(1, READER_SHEET.max_row):
 		cell = READER_SHEET.cell(a, 2)
 		if cell.value == "Adjustment Cash":
@@ -28,6 +32,10 @@ def adjustment_cash_cell_finder():
 
 
 def cash_figure():
+	"""
+
+	:return:
+	"""
 	return adjustment_cash_cell_finder().offset(1, 4)
 
 
@@ -40,6 +48,10 @@ def total_portfolio_value():
 
 
 def get_total_target():
+	"""
+
+	:return:
+	"""
 	for a in range(1, READER_SHEET.max_row):
 		cell = READER_SHEET.cell(a, 11)
 		if cell.value == "Total Deals":
@@ -47,10 +59,18 @@ def get_total_target():
 
 
 def get_cash_target():
+	"""
+
+	:return:
+	"""
 	return get_total_target().offset(-2, 0)
 
 
 def bond_sector_start_point():
+	"""
+
+	:return:
+	"""
 	for a in range(1, READER_SHEET.max_row):
 		cell = READER_SHEET.cell(a, 5)
 		if cell.value == "Bonds":
@@ -58,6 +78,10 @@ def bond_sector_start_point():
 
 
 def bond_sector_end_point():
+	"""
+
+	:return:
+	"""
 	for a in range(bond_sector_start_point().row, READER_SHEET.max_row):
 		cell = READER_SHEET.cell(a, 5)
 		if cell.value == "Total Bonds + Property":
@@ -65,6 +89,10 @@ def bond_sector_end_point():
 
 
 def equity_sector_start_point():
+	"""
+
+	:return:
+	"""
 	for a in range(bond_sector_end_point().row, bond_sector_end_point().row + 5):
 		cell = READER_SHEET.cell(a, 5)
 		if cell.value == "Equities":
@@ -72,6 +100,10 @@ def equity_sector_start_point():
 
 
 def equity_sector_end_point():
+	"""
+
+	:return:
+	"""
 	for a in range(equity_sector_start_point().row, READER_SHEET.max_row):
 		cell = READER_SHEET.cell(a, 5)
 		if cell.value == "Total Equities":
@@ -79,6 +111,10 @@ def equity_sector_end_point():
 
 
 def bonds_sector():
+	"""
+
+	:return:
+	"""
 	all_stable_sector_return = []
 	for a in range(bond_sector_start_point().row + 1, bond_sector_end_point().row):
 		cell = READER_SHEET.cell(a, 5)
@@ -88,6 +124,10 @@ def bonds_sector():
 
 
 def equities_sector():
+	"""
+
+	:return:
+	"""
 	all_equities = []
 	for a in range(equity_sector_start_point().row + 1, equity_sector_end_point().row):
 		cell = READER_SHEET.cell(a, 5)
@@ -96,6 +136,10 @@ def equities_sector():
 
 
 def all_buckets():
+	"""
+
+	:return:
+	"""
 	to_write = []
 	for x in bonds_sector():
 		to_write.append(x)
@@ -106,6 +150,10 @@ def all_buckets():
 
 
 def all_buckets_no_mm():
+	"""
+
+	:return:
+	"""
 	to_write = []
 	for x in bonds_sector():
 		to_write.append(x)
@@ -115,6 +163,10 @@ def all_buckets_no_mm():
 
 
 def money_markets_bucket():
+	"""
+
+	:return:
+	"""
 	for x in range(equity_sector_end_point().row, equity_sector_end_point().row + 5):
 		cell = (READER_SHEET.cell(x, 5))
 		if cell.value == "CASH/MONEY MARKETS":
@@ -122,6 +174,10 @@ def money_markets_bucket():
 
 
 def money_market_funds_finder():
+	"""
+
+	:return:
+	"""
 	all_money_markets = []
 	for x in all_funds():
 		if x.offset(0, 4).value == "CASH/MONEY MARKETS":
@@ -130,6 +186,10 @@ def money_market_funds_finder():
 
 
 def all_funds():
+	"""
+
+	:return:
+	"""
 	last_fund = None
 	for a in range(adjustment_cash_cell_finder().row, 1, -1):
 		cell_check = READER_SHEET.cell(a, 5)
@@ -174,6 +234,10 @@ def bucket_identifier(fund):
 
 
 def find_bond_sector_dtt():
+	"""
+
+	:return:
+	"""
 	sector_dtt: int = 0
 	for bucket in bonds_sector():
 		funds_in_bucket = find_funds_in_bucket(bucket.value)[0]
@@ -193,6 +257,10 @@ def find_bond_sector_dtt():
 
 
 def bond_sector_traded():
+	"""
+
+	:return:
+	"""
 	for bucket in bonds_sector():
 		funds_in_bucket = find_funds_in_bucket(bucket.value)[0]
 		if len(funds_in_bucket) != 0:
@@ -204,6 +272,10 @@ def bond_sector_traded():
 
 
 def equity_sector_traded():
+	"""
+
+	:return:
+	"""
 	for bucket in equities_sector():
 		funds_in_bucket = find_funds_in_bucket(bucket.value)[0]
 		if len(funds_in_bucket) != 0:
@@ -215,6 +287,10 @@ def equity_sector_traded():
 
 
 def mm_sector_traded():
+	"""
+
+	:return:
+	"""
 	funds_in_bucket = find_funds_in_bucket(money_markets_bucket().value)[0]
 	if len(funds_in_bucket) != 0:
 		for fund in funds_in_bucket:
@@ -224,6 +300,10 @@ def mm_sector_traded():
 
 
 def find_equity_sector_dtt():
+	"""
+
+	:return:
+	"""
 	sector_dtt = 0
 	for bucket in equities_sector():
 		funds_in_bucket = find_funds_in_bucket(bucket.value)[0]
@@ -243,6 +323,10 @@ def find_equity_sector_dtt():
 
 
 def find_mm_dtt():
+	"""
+
+	:return:
+	"""
 	sector_dtt = 0
 	funds_in_bucket = find_funds_in_bucket(money_markets_bucket().value)[0]
 	if len(funds_in_bucket) != 0:
@@ -304,6 +388,11 @@ def all_bucket_deal_to_target(buckets=all_buckets):
 
 
 def sector_deal_to_target(bucket_to_id):
+	"""
+
+	:param bucket_to_id:
+	:return:
+	"""
 	if bucket_to_id in equities_sector():
 		return find_equity_sector_dtt()
 	if bucket_to_id in bonds_sector():

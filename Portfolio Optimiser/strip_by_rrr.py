@@ -22,6 +22,10 @@ global READER_SHEET, ALL_FUNDS, ALL_RETURNS, MODIFIED_FILENAME, FILENAME
 
 # This creates a dictionary of returns against each fund.
 def dictionary_creation():
+	"""
+
+	:return:
+	"""
 	funds_dict = {}
 	for fund in ALL_FUNDS:
 		if fund.offset(0, 1).value is None or fund.offset(0, 2).value is None:
@@ -69,6 +73,14 @@ def process_weekly_returns(fund_returns):
 # This function calculates min and max equity as well as the difference at the end of the month,
 # from these high/low points.
 def monthly_returns(w1v, w2v, w3v, w4v):
+	"""
+
+	:param w1v:
+	:param w2v:
+	:param w3v:
+	:param w4v:
+	:return:
+	"""
 	# The end point of the month.
 	e = w4v
 	# Peak equity
@@ -86,6 +98,13 @@ def monthly_returns(w1v, w2v, w3v, w4v):
 
 # Returns the AMR for the third and fifth year values.
 def amr_calculator(amr, year_3_value, year_5_value):
+	"""
+
+	:param amr:
+	:param year_3_value:
+	:param year_5_value:
+	:return:
+	"""
 	# print(amr[0:5], year_3_value, year_5_value)
 	# This ensures the value is recorded as 0 but elimates an error.
 	if len(amr) <= 10:
@@ -104,6 +123,13 @@ def amr_calculator(amr, year_3_value, year_5_value):
 
 # This formats the output to be passed to the Excel writer.
 def output_generator(company_being_read, amr, amount_returns):
+	"""
+
+	:param company_being_read:
+	:param amr:
+	:param amount_returns:
+	:return:
+	"""
 	# print(company_being_read, amr, amount_returns)
 	company_name = company_being_read.offset(0, -1).value
 	isin = company_being_read.value
@@ -116,6 +142,11 @@ def output_generator(company_being_read, amr, amount_returns):
 
 # This runs through each fund and returns the structured output.
 def generator(fund_dictionary):
+	"""
+
+	:param fund_dictionary:
+	:return:
+	"""
 	to_return = []
 	keys_to_remove = []
 	for key in fund_dictionary.keys():
@@ -133,6 +164,11 @@ def generator(fund_dictionary):
 
 # There are 3 groups that the value growth scores are to be broken into.
 def find_value_growth_score_sheets(fund_array):
+	"""
+
+	:param fund_array:
+	:return:
+	"""
 	to_return = []
 	for fund in fund_array:
 		if fund[3] is None:
@@ -148,6 +184,12 @@ def find_value_growth_score_sheets(fund_array):
 
 # Groups all funds by their growth/value scores.
 def sort_growth_value_scores(funds, boundaries):
+	"""
+
+	:param funds:
+	:param boundaries:
+	:return:
+	"""
 	value, balanced, growth = [], [], []
 	for fund in funds:
 		if fund[3] is None:
@@ -166,6 +208,11 @@ def sort_growth_value_scores(funds, boundaries):
 
 
 def high_cap_low_cap(grow_bal_val_sorted):
+	"""
+
+	:param grow_bal_val_sorted:
+	:return:
+	"""
 	value_low_cap, value_mid, value_high_cap = [], [], []
 	balanced_low_cap, balanced_mid, balanced_high_cap = [], [], []
 	growth_low_cap, growth_mid, growth_high_cap, = [], [], []
@@ -217,12 +264,22 @@ def filter_the_best(fully_sorted_companies: [list], companies_per_sector) -> lis
 
 
 def return_all_companies(fully_sorted_companies):
+	"""
+
+	:param fully_sorted_companies:
+	:return:
+	"""
 	list_companies = [classification for idx, classification in enumerate(fully_sorted_companies, start=1)]
 	all_company_names = [[i[0] for i in classification] for classification in list_companies]
 	return all_company_names
 
 
 def modify_reader_sheet(arr_in):
+	"""
+
+	:param arr_in:
+	:return:
+	"""
 	df = pd.read_excel(FILENAME, skiprows=8, index_col=0, header=0).T
 	df = df.dropna(subset=["Value-Growth Score (Long)"], inplace=False, axis=1)
 	sector = df['IA UK All Companies']
@@ -234,11 +291,15 @@ def modify_reader_sheet(arr_in):
 
 
 def strip_main():
+	"""
+
+	:return:
+	"""
 	# So I need to think about whether dataframes are the best way to do this calculation going forward.
 	#   that could be the first thing that I try and htink about improving if the program is dead slow.
 	global READER_SHEET, ALL_FUNDS, ALL_RETURNS, FILENAME
 	all_files = file_id_reader.list_all_files(False)
-	FILENAME = file_id_reader.user_selected_file(all_files, enable_all=True)
+	FILENAME = file_id_reader.user_selected_file(all_files)
 	reader_doc = xl.load_workbook(FILENAME)
 	READER_SHEET = reader_doc.active
 	file_id_reader.READER_SHEET = READER_SHEET

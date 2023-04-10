@@ -13,6 +13,10 @@ global READER_SHEET, ALL_FUNDS, ALL_RETURNS, MODIFIED_FILENAME
 
 # This creates a dictionary of returns against each fund.
 def dictionary_creation():
+	"""
+
+	:return:
+	"""
 	funds_dict = {}
 	for fund in ALL_FUNDS:
 		fund_returns = []
@@ -68,6 +72,14 @@ def process_weekly_returns(fund_returns):
 # This function calculates min and max equity as well as the difference at the end of the month,
 # from these high/low points.
 def monthly_returns(w1v, w2v, w3v, w4v):
+	"""
+
+	:param w1v:
+	:param w2v:
+	:param w3v:
+	:param w4v:
+	:return:
+	"""
 	# The end point of the month.
 	e = w4v
 	# Peak equity
@@ -85,6 +97,13 @@ def monthly_returns(w1v, w2v, w3v, w4v):
 
 # Returns the AMR for the third and fifth year values.
 def amr_calculator(amr, year_3_value, year_5_value):
+	"""
+
+	:param amr:
+	:param year_3_value:
+	:param year_5_value:
+	:return:
+	"""
 	# This ensures the value is recorded as 0 but elimates an error.
 	if not (len(amr)) > 10:
 		return 0, 0, 0
@@ -102,6 +121,14 @@ def amr_calculator(amr, year_3_value, year_5_value):
 
 # This formats the output to be passed to the Excel writer.
 def output_generator(company_being_read, amr, amount_returns, max_returns):
+	"""
+
+	:param company_being_read:
+	:param amr:
+	:param amount_returns:
+	:param max_returns:
+	:return:
+	"""
 	company_name = company_being_read.offset(0, -1).value
 	isin = company_being_read.value
 	ia_sector = company_being_read.offset(0, 1).value
@@ -126,6 +153,11 @@ def output_generator(company_being_read, amr, amount_returns, max_returns):
 
 
 def generator(fund_dictionary):
+	"""
+
+	:param fund_dictionary:
+	:return:
+	"""
 	to_return = []
 	i = 0
 	for x in fund_dictionary.values():
@@ -147,6 +179,11 @@ def generator(fund_dictionary):
 
 # This generates the deciles used for catagorisation.
 def classify_deciles(output_ready_for_processing):
+	"""
+
+	:param output_ready_for_processing:
+	:return:
+	"""
 	third_year_rrr = []
 	fifth_year_rrr = []
 	for fund in output_ready_for_processing:
@@ -161,6 +198,12 @@ def classify_deciles(output_ready_for_processing):
 
 # This breaks the funds into their deciles using a function that is built into numpy.
 def decimate_rrr(deciles, all_funds):
+	"""
+
+	:param deciles:
+	:param all_funds:
+	:return:
+	"""
 	for fund in all_funds:
 		fund[5] = np.searchsorted(deciles[0], fund[5]) + 1
 		fund[6] = np.searchsorted(deciles[1], fund[6]) + 1
@@ -179,6 +222,12 @@ def decimate_rrr(deciles, all_funds):
 
 # Groups all funds by their growth/value scores.
 def sort_growth_value_scores(funds, boundaries):
+	"""
+
+	:param funds:
+	:param boundaries:
+	:return:
+	"""
 	value, balanced, growth = [], [], []
 	# for i, head in enumerate(headers):
 	# if "value-growth" in head.lower():
@@ -198,6 +247,11 @@ def sort_growth_value_scores(funds, boundaries):
 # TODO: Microcap - Mid & Small breakdown. Take from Strip by RRR. micro's are less than between 200-300 see what works.
 #
 def high_cap_low_cap(grow_bal_val_sorted):
+	"""
+
+	:param grow_bal_val_sorted:
+	:return:
+	"""
 	value_low_cap, value_high_cap, balanced_low_cap, balanced_high_cap, growth_low_cap, growth_high_cap, = [], [], \
 		[], [], \
 		[], []
@@ -238,6 +292,10 @@ def high_cap_low_cap(grow_bal_val_sorted):
 
 
 def get_headers():
+	"""
+
+	:return:
+	"""
 	allowable_headers = []
 	for i in range(1, 50):
 		cell = READER_SHEET.cell(9, i).value
@@ -251,7 +309,7 @@ def get_headers():
 
 def main():
 	global READER_SHEET, MODIFIED_FILENAME, ALL_FUNDS, ALL_RETURNS
-	all_files = file_id_reader.list_all_files(True)
+	all_files = file_id_reader.list_all_files()
 	filename_user = file_id_reader.user_selected_file(all_files)
 	filenames = file_id_reader.file_name_generator(filename_user)
 	for filename in filenames:

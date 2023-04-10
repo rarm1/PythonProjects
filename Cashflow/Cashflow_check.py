@@ -8,9 +8,18 @@ global FILE, MOST_RECENT_FILENAME
 
 
 def find_the_file():
+	"""
+
+	:return:
+	"""
 	date_arr = []
 	
 	def date_convert(in_date):
+		"""
+
+		:param in_date:
+		:return:
+		"""
 		try:
 			return datetime.strptime(in_date, '%d%m%y')
 		except ValueError:
@@ -31,6 +40,11 @@ def find_the_file():
 	files_from_date = [file for file in sorted_arr[0:10] if file[1][0:6] == latest_date]
 	
 	def sort_by_time(arr):
+		"""
+
+		:param arr:
+		:return:
+		"""
 		return arr[1][7:11]
 	
 	sorted_arr = sorted(files_from_date, key=sort_by_time, reverse=True)[0:2]
@@ -47,6 +61,10 @@ def find_the_file():
 
 
 def check_cashflows():
+	"""
+
+	:return:
+	"""
 	document = FILE
 	overweight_share_class = []
 	for row in range(1, document.max_row):
@@ -61,6 +79,11 @@ def check_cashflows():
 
 
 def portfolio_weighting_calculator(overweight_classes):
+	"""
+
+	:param overweight_classes:
+	:return:
+	"""
 	overweight_portfolios = []
 	for shareclass in overweight_classes:
 		total_units = 0
@@ -83,6 +106,9 @@ def portfolio_weighting_calculator(overweight_classes):
 
 
 def main():
+	"""
+
+	"""
 	global FILE
 	filename = find_the_file()
 	print(f'File read: {filename}')

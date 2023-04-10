@@ -7,6 +7,10 @@ from email.mime.text import MIMEText
 
 
 class Email:
+	"""
+
+	"""
+	
 	def __init__(self, agency, fund_details):
 		self.recipient_list = ['richard.armstrong@margetts.com', 'fundmanagers@margetts.com']
 		self.cc_list = ['cctest@gmail.com']
@@ -22,6 +26,10 @@ class Email:
 		self.files = []
 	
 	def write_email(self):
+		"""
+
+		:return:
+		"""
 		self.ta_address = '<br>'.join(self.ta_address.splitlines())
 		return f"{self.Salutation}, <br><br>" \
 		       f"" \
@@ -45,6 +53,10 @@ class Email:
 		       f"Kind Regards<br>"
 	
 	def save_email(self, output):
+		"""
+
+		:param output:
+		"""
 		msg = MIMEMultipart()
 		msg['Subject'] = self.subject
 		msg['To'] = "; ".join(self.recipient_list)
@@ -65,10 +77,18 @@ class Email:
 			outfile.write(msg.as_bytes())
 	
 	def subject_writer(self):
+		"""
+
+		:return:
+		"""
 		return f"(Ref: TBC) {self.FundName} - Account Opening for Designation {self.Designations}"
 	
 	@staticmethod
 	def morning_afternoon():
+		"""
+
+		:return:
+		"""
 		now = datetime.now()
 		if now.hour < 12:
 			return "Good Morning"

@@ -2,6 +2,10 @@ import pandas as pd
 
 
 class DataProcessing:
+	"""
+
+	"""
+	
 	# This should be automated, defining it removes the point of the whole process.
 	def __init__(self, unprocessed_document: pd.DataFrame):
 		self.UnprocessedDocument = unprocessed_document
@@ -20,6 +24,9 @@ class DataProcessing:
 		self.process_df()
 	
 	def process_df(self):
+		"""
+
+		"""
 		try:
 			self.UnprocessedDocument[self.UpDownDifference] = \
 				self.UnprocessedDocument[self.UpCapRatio].astype(float) - \

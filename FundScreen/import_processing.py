@@ -8,12 +8,16 @@ pd.set_option('display.max_rows', None)
 
 
 class ImportProcessing:
+	"""
+
+	"""
+	
 	# TODO: This cleaning feels very rigid. Could I do something like get all the dates and then remove where either
 	#  fund name, ISIN, avg cap, vg score etc is empty?
 	def __init__(self, filetype: str = ".csv"):
 		self.DF = None
 		self.Headers = None
-		all_files = file_id_reader.list_all_files(True, file_type=filetype)
+		all_files = file_id_reader.list_all_files(file_type=filetype)
 		filename_user = file_id_reader.user_selected_file(all_files)
 		self.Filename = file_id_reader.file_name_generator(filename_user)[0]
 		self.def_df()
@@ -25,6 +29,9 @@ class ImportProcessing:
 		self.DF.columns = self.DF.iloc[0].tolist()
 	
 	def dropna(self):
+		"""
+
+		"""
 		# TODO: Drop if there is no ISIN or Fund name.
 		self.DF.dropna(subset=['Group/Investment', 'ISIN'], inplace=True)
 		# for header in self.Headers:
@@ -41,6 +48,9 @@ class ImportProcessing:
 	# self.clean_columns()
 	
 	def clean_columns(self):
+		"""
+
+		"""
 		returns = False
 		column_names = []
 		return_count = 1
@@ -56,6 +66,9 @@ class ImportProcessing:
 		self.DF.columns = column_names
 	
 	def def_df(self):
+		"""
+
+		"""
 		if "csv" in self.Filename:
 			self.DF = pd.read_csv(self.Filename, index_col=None)
 		elif "xlsx" in self.Filename:

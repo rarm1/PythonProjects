@@ -2,6 +2,9 @@ from constants import Constants
 
 
 class OutputDocument:
+	"""
+
+	"""
 	
 	def __init__(self):
 		self.AOL_Filename = None
@@ -16,6 +19,9 @@ class OutputDocument:
 		self.Constants = Constants()
 	
 	def create_files(self):
+		"""
+
+		"""
 		try:
 			# self.Constants.AOL_Template_Doc.save(self.Location + self.AOL_Filename)
 			# self.AOL_Written_File_Path = self.Location + self.AOL_Filename

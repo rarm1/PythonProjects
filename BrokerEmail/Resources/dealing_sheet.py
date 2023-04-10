@@ -1,9 +1,12 @@
 import pandas as pd
 
-import file_id_reader
+from assets import file_id_reader
 
 
 class DealingSheet:
+	"""
+
+	"""
 	
 	def __init__(self):
 		print("Welcome to PAM Broker Uploader")
@@ -19,7 +22,7 @@ class DealingSheet:
 		"""
 		Reads the document from the file and returns a pandas DataFrame.
 		"""
-		all_files = file_id_reader.list_files_by_type(False, to_ignore=['ISIN_to_Ticker.csv', 'pid_lookup.csv'])
+		all_files = file_id_reader.list_all_files(False, exclusions=['ISIN_to_Ticker.csv', 'pid_lookup.csv'])
 		
 		if len(all_files) == 1:
 			filename = all_files[0]
@@ -27,8 +30,8 @@ class DealingSheet:
 		else:
 			for idx, filename in enumerate(all_files):
 				print(idx + 1, filename)
-			filename_user = file_id_reader.select_file_by_user(all_files, enable_all=False)
-			filename = file_id_reader.generate_file_names(filename_user)[0]
+			filename_user = file_id_reader.user_selected_file(all_files, enable_all=False)
+			filename = file_id_reader.file_name_generator(filename_user)[0]
 		
 		try:
 			self.filetype = "xlsx"

@@ -3,6 +3,10 @@ from input_document import InputDocument
 
 
 class FundDetails:
+	"""
+
+	"""
+	
 	def __init__(self, row):
 		self.Constants = Constants()
 		self.Reader_Sheet = InputDocument().Reader_Sheet
@@ -16,6 +20,9 @@ class FundDetails:
 		self.ADDR = self.BNYAddress
 	
 	def bny_address_finder(self):
+		"""
+
+		"""
 		try:
 			if "gb" in self.ISIN[0:2].lower():
 				self.BNYAddress = "The Bank of New York Nominees Ltd, 1 Piccadilly Gardens, Manchester, M1 1RN"
@@ -28,5 +35,9 @@ class FundDetails:
 			pass
 	
 	def variable_definition(self, row):
+		"""
+
+		:param row:
+		"""
 		self.Fund_Name = self.Reader_Sheet.cell(row=row, column=self.Constants.FundNameColumn).value
 		self.ISIN = self.Reader_Sheet.cell(row=row, column=self.Constants.ISINColumn).value

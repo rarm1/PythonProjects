@@ -1,4 +1,8 @@
 class Intro:
+	"""
+
+	"""
+	
 	def __init__(self):
 		self.client_name = None
 		self.margetts_portfolio_identifier = None
@@ -11,6 +15,9 @@ class Intro:
 	
 	# These need to be dynamic variables retrieved from the Excel file.
 	def def_vars(self):
+		"""
+
+		"""
 		self.client_name = 'client_name'
 		self.margetts_portfolio_identifier = 'margetts_portfolio_identifier'
 		self.date_provided = 'date_provided'

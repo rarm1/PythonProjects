@@ -77,6 +77,9 @@ def single_trade_writer(fund, trade_amount):
 
 
 def final_trade_writer():
+	"""
+
+	"""
 	for fund in constants.all_funds():
 		if fund.offset(0, 2).value is not None:
 			row = fund.row
@@ -89,6 +92,10 @@ def final_trade_writer():
 
 
 def trade_finder():
+	"""
+
+	:return:
+	"""
 	all_trades = []
 	for fund in constants.all_funds():
 		if fund.offset(0, 2).value is not None:
@@ -104,10 +111,21 @@ REQ_DATE = TODAY.strftime("%d/%m/%Y")
 # This generator creates an array.
 # Moving this function allows for more processing without the function getting overly complex.
 def unit_price(trade):
+	"""
+
+	:param trade:
+	:return:
+	"""
 	return abs(trade.offset(0, -6).value) / abs(trade.offset(0, -5).value)
 
 
 def units_to_trade(price_per_unit, trade):
+	"""
+
+	:param price_per_unit:
+	:param trade:
+	:return:
+	"""
 	return abs(trade.offset(0, 2).value) / abs(price_per_unit)
 
 
@@ -169,6 +187,10 @@ def data_frame_generator(trades):
 
 # This requests the name of the fund manager from the user and uses this to write to the csv.
 def fundmanager_selection():
+	"""
+
+	:return:
+	"""
 	global FUND_MANAGER
 	# The use of enumerate here allows for easier visualisation of the array for the user.
 	# without using this function the list would start at '0' which is much less natural for most potential users. #
@@ -196,12 +218,20 @@ def fundmanager_selection():
 # Does this need additional oversight?
 # Are IBOSS / Clarion likely to be the FMs? #
 def get_fund_manager():
+	"""
+
+	:return:
+	"""
 	return FUND_MANAGER
 
 
 # This finds the scheme loopup reference document. This document, again, is located in a central place, such that it can
 # be updated. Provided the layout, and name of the file is the same, then it can be changed without modifying any code.
 def scheme_lookup():
+	"""
+
+	:return:
+	"""
 	rebalancer_scheme = READER_SHEET.cell(4, 2)
 	for x in range(1, SCHEME_SHEET.max_row + 1):
 		scheme_pid_lookup = (SCHEME_SHEET.cell(x, 2))
@@ -211,6 +241,11 @@ def scheme_lookup():
 
 
 def ticker_lookup(isin):
+	"""
+
+	:param isin:
+	:return:
+	"""
 	for i in range(1, ISIN_TO_TICKER_SHEET.max_row + 1):
 		isin_in_lookup = ISIN_TO_TICKER_SHEET.cell(i, 1)
 		if isin_in_lookup.value is not None:
@@ -221,6 +256,10 @@ def ticker_lookup(isin):
 
 
 def tg_account_number_lookup():
+	"""
+
+	:return:
+	"""
 	rebalancer_scheme = READER_SHEET.cell(2, 2)
 	for x in range(1, TG_ACCOUNT_NUMBERS.max_row + 1):
 		if TG_ACCOUNT_NUMBERS.cell(x, 1).value is not None:
@@ -256,6 +295,10 @@ def buy_or_sell(trade):
 # This is the trade identifier that is generated in the constants file.
 # The reason that this file is centralised is that it reduces duplicate trade errors.
 def get_trade_value():
+	"""
+
+	:return:
+	"""
 	trade_counter_doc = xl.load_workbook(TRADE_ID_FILE)
 	trade_sheet = trade_counter_doc[TRADE_ID_SHEET]
 	return trade_sheet.cell(1, 1).value
@@ -488,6 +531,10 @@ def automated_trading_array_generator(trade_array):
 # This updates the trade number after ever rebalancer that has been read. This adds a stable point in which to rewrite.
 # And doesn't give the user a chance to write trades, and then escape the program without updating the trade quantity.
 def write_trade_value(trade):
+	"""
+
+	:param trade:
+	"""
 	trade_counter_doc = xl.load_workbook(TRADE_ID_FILE)
 	trade_sheet = trade_counter_doc[TRADE_ID_SHEET]
 	trade_sheet.cell(1, 1).value = trade
