@@ -9,9 +9,9 @@ class PIDLookup:
 	
 	def __init__(self, pid):
 		self.pid = pid
-		with open('../pid_lookup.csv', 'rb') as f:
+		with open('pid_lookup.csv', 'rb') as f:
 			result = chardet.detect(f.read())
-		self.document = pd.read_csv('../pid_lookup.csv', encoding=result['encoding'])
+		self.document = pd.read_csv('pid_lookup.csv', encoding=result['encoding'])
 	
 	@property
 	def designation_lookup(self):

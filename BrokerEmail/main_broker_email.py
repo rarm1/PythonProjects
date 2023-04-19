@@ -1,9 +1,9 @@
 import logging
 
-from Resources.broker_output import BrokerOutput
-from Resources.dealing_sheet import DealingSheet
-from Resources.email_writer import Email
-from Resources.proofing_table import ProofingTable
+from broker_output import BrokerOutput
+from dealing_sheet import DealingSheet
+from email_writer import Email
+from proofing_table import ProofingTable
 
 logging.basicConfig(level=logging.INFO)
 

@@ -6,5 +6,5 @@ pip install bs4
 pip install chardet
 pip install aiohttp
 cd "X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\BrokerEmail"
-python broker_main.py
+python main_broker_email.py
 pause

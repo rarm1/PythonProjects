@@ -56,5 +56,5 @@ class Email:
 		body = self.write_email(trade_table, proof_table)
 		part = MIMEText(body, 'html')
 		msg.attach(part)
-		with open("../BrokerTest.eml", 'w') as outfile:
+		with open("BrokerTest.eml", 'w') as outfile:
 			outfile.write(msg.as_string())
