@@ -7,7 +7,7 @@ import numpy as np
 
 from assets import file_id_reader
 
-logging.basicConfig(filename='Resources/Trade_reader.log', level=logging.INFO)
+logging.basicConfig(filename='Trade_reader.log', level=logging.INFO)
 file_checker = file_id_reader.list_all_files(False, '.csv')
 if len(file_checker) == 1:
 	file = np.recfromcsv(file_checker[0], encoding=None)
@@ -40,7 +40,7 @@ try:
 except Exception as e:
 	logging.error("Error occured" + str(e))
 
-with open('Tell Dealing.txt', 'w') as f:
+with open('../Tell Dealing.txt', 'w') as f:
 	for portfolio in dictionary_output.keys():
 		len_port = len(dictionary_output[portfolio])
 		f.write(f"{portfolio} {len_port} trade{'s' if len_port > 1 else ''}\n")

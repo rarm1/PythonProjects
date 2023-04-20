@@ -1,13 +1,14 @@
-class Intro:
-    def __init__(self, df):
+# I might be over complicating this. Do I need to have seperate classes with inheritence or could I just have a
+# single class with various methods and sub methods for definitions?
+class Variables:
+    def __init__(self, holdings_df, portfolio_df, performance_df):
         self.client_name = None
         self.margetts_portfolio_identifier = None
         self.date_provided = None
         self.performance_end_date = None
         self.new_paragraph = None
         self.intro_text = None
-        self.def_vars(df)
-        self.write_introduction()
+        self.def_vars(portfolio_df)
 
     def def_vars(self, df):
         self.client_name = df.iloc[2, 0]
@@ -16,6 +17,12 @@ class Intro:
         self.date_provided = df.iloc[18, 7].strftime('%d/%m/%Y')
         self.performance_end_date = df.iloc[19, 7].strftime('%d/%m/%Y')
         self.new_paragraph = '\n\n'
+
+class Intro(Variables):
+    def __init__(self, holdings_df, portfolio_df, performance_df):
+        super().__init__(holdings_df, portfolio_df, performance_df)
+        self.intro_text = None
+        self.write_introduction()
 
     def write_introduction(self):
         self.intro_text = f"In the below report, {self.client_name}'s portfolio is compared to the Margetts Risk Rated " \

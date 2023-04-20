@@ -15,7 +15,7 @@ RRR_HEADERS = ["Fund Name", "ISIN", "IA Sector", "Average Cap", "Growth to Value
 
 # This lists all xlsx files which can be read by the rebalancer.
 # TODO: Maybe replace arguments with kwargs.
-def list_all_files(to_print=True, file_type='.xlsx', exclusions: list = None):
+def list_all_files(to_print=True, file_type='.xlsx', exclusions: list = ()):
 	"""
 	List all files according to certain criteria.
 	:param exclusions: This is a list that takes files that should be excluded. This is going to be for test files,

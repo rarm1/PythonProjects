@@ -15,12 +15,10 @@ global MODIFIED_FILENAME, WRITER_SHEET, READER_SHEET, READER_DOC, NON_BROKER_FIL
 	FUND_MANAGER
 TRADES = 0
 # These are used so that if the location changes, it can be changed here, without refactoring the entire project.
-SCHEME_LIST_LOCATION = 'X:/Fund Management/Fund Management Team Files/Richard/scheme_list_desig.xlsm'
-TRADE_ID_FILE = 'X:/Fund Management/Fund Management Team Files/Richard/trade_identifier.xlsx'
+SCHEME_LIST_LOCATION = 'Resources/scheme_list_desig.xlsx'
+TRADE_ID_FILE = 'Resources/trade_identifier.xlsx'
 TRADE_ID_SHEET = 'trade_identifier'
-TG_ACCOUNT_PATH = 'X:/Fund Management/Fund Management Team Files/Richard/Thomas Grant account numbers.xlsx'
-TG_ACCOUNT_DOC = xl.load_workbook(TG_ACCOUNT_PATH, data_only=True)
-TG_ACCOUNT_NUMBERS = TG_ACCOUNT_DOC['Sheet1']
+
 # The scheme loopup is written here. This is for ease of updating.
 # Again, if multiple people are using this program, then
 # ensuring every instance of this document is updated will be more error-prone.
@@ -395,9 +393,8 @@ def notes_value(trade):
 		if notes.lower() == "cis":
 			return "Rebalancing"
 		if 'sell' in notes.lower() and buy_or_sell(trade) == "BUY":
-			print(
-					f"Are you sure the notes are correct? It looks like this trade is a buy. {trade.offset(0, -7).value}\n"
-					f"This is in {READER_DOC}.")
+			print(f"Are you sure the notes are correct? It looks like this trade is a buy. "
+				  f"{trade.offset(0, -7).value}\n")
 			if input("Do you want to continue? Y/N: ").lower() == "y":
 				return notes
 			else:

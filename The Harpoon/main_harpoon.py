@@ -2,8 +2,11 @@ import datetime
 import sys
 
 import openpyxl as xl
+import pandas as pd
 
 from assets import file_id_reader
+from variables import Intro
+from Introduction import Intro
 
 # TODO: Does the 5, 3, 1 and YTD comparisons need to have seperate thresholds for outperformance.
 #  I feel like they do because they are different time periods.
@@ -29,8 +32,11 @@ def obtain_file():
 	filename_user = file_id_reader.user_selected_file(all_files)
 	filename = file_id_reader.file_name_generator(filename_user)[0]
 	FILENAME = filename
+	port_hold_df = pd.read_excel(filename, sheet_name="Portfolio holdings", header=None)
+	port_comp_df = pd.read_excel(filename, sheet_name="Portfolio Comparison", header=None)
+	perf_comp_df = pd.read_excel(filename, sheet_name="Performance Comparison", header=None)
 	document = xl.load_workbook(filename, data_only=True)
-	return document
+	return port_hold_df, port_comp_df, perf_comp_df
 
 
 def variable_definitions():
@@ -49,44 +55,46 @@ def harpoon():
 
 	"""
 	global DOCUMENT
-	DOCUMENT = obtain_file()
-	variable_definitions()
-	written_row = 1
-	output_sheet = DOCUMENT.create_sheet(title="OUTPUT")
-	# TODO: Create classes out of these sheets.
-	
-	input_sheets = ["Introduction", "Asset Allocation", "Performance", "Ongoing Charges"]
-	for input_sheet in input_sheets:
-		paragraphs = paragraph_writer(input_sheet)
-		output_sheet.cell(row=written_row, column=1).value = input_sheet
-		written_row += 1
-		for para in paragraphs:
-			output_sheet.cell(row=written_row, column=1).value = para
-			written_row += 1
-	port_comp_sheet = DOCUMENT['Portfolio Comparison']
-	margetts_ocf, client_ocf, client_name, margetts_fund = 0.0, 0.0, str, []
-	for i in range(1, 30):
-		try:
-			if 'Margetts Weighted OCF' in port_comp_sheet.cell(i, 7).value:
-				margetts_ocf = port_comp_sheet.cell(i, 8).value
-			if 'Weighted Average Client OCF' in port_comp_sheet.cell(i, 7).value:
-				client_ocf = port_comp_sheet.cell(i, 8).value
-			if 'Margetts Fund' in port_comp_sheet.cell(i, 7).value:
-				margetts_fund.append(port_comp_sheet.cell(i, 8).value)
-			if 'Margetts Share Class' in port_comp_sheet.cell(i, 7).value:
-				margetts_fund.append(port_comp_sheet.cell(i, 8).value)
-			if 'Client Name' in port_comp_sheet.cell(i, 7).value:
-				client_name = port_comp_sheet.cell(i, 8).value
-		except TypeError:
-			# Because of the 'in' clause, this will error. Could be replaced with == when template is fully resolved.
-			pass
-	margetts_fund = " ".join(margetts_fund)
-	output_sheet.cell(row=written_row, column=1).value = "Margetts Risk Rated " + margetts_fund
-	output_sheet.cell(row=written_row, column=2).value = str(round(margetts_ocf * 100, 2)) + "%"
-	written_row += 1
-	output_sheet.cell(row=written_row, column=1).value = client_name + " portfolio (weighted average underlying OCF)"
-	output_sheet.cell(row=written_row, column=2).value = str(round(client_ocf * 100, 2)) + "%"
-	DOCUMENT.save(FILENAME[:-5] + " Output.xlsx")
+	port_hold_df, port_comp_df, perf_comp_df = obtain_file()
+	intro = Intro(port_hold_df, port_comp_df, perf_comp_df)
+	print(intro.intro_text)
+	# variable_definitions()
+	# written_row = 1
+	# output_sheet = DOCUMENT.create_sheet(title="OUTPUT")
+	# # TODO: Create classes out of these sheets.
+	#
+	# input_sheets = ["Introduction", "Asset Allocation", "Performance", "Ongoing Charges"]
+	# for input_sheet in input_sheets:
+	# 	paragraphs = paragraph_writer(input_sheet)
+	# 	output_sheet.cell(row=written_row, column=1).value = input_sheet
+	# 	written_row += 1
+	# 	for para in paragraphs:
+	# 		output_sheet.cell(row=written_row, column=1).value = para
+	# 		written_row += 1
+	# port_comp_sheet = DOCUMENT['Portfolio Comparison']
+	# margetts_ocf, client_ocf, client_name, margetts_fund = 0.0, 0.0, str, []
+	# for i in range(1, 30):
+	# 	try:
+	# 		if 'Margetts Weighted OCF' in port_comp_sheet.cell(i, 7).value:
+	# 			margetts_ocf = port_comp_sheet.cell(i, 8).value
+	# 		if 'Weighted Average Client OCF' in port_comp_sheet.cell(i, 7).value:
+	# 			client_ocf = port_comp_sheet.cell(i, 8).value
+	# 		if 'Margetts Fund' in port_comp_sheet.cell(i, 7).value:
+	# 			margetts_fund.append(port_comp_sheet.cell(i, 8).value)
+	# 		if 'Margetts Share Class' in port_comp_sheet.cell(i, 7).value:
+	# 			margetts_fund.append(port_comp_sheet.cell(i, 8).value)
+	# 		if 'Client Name' in port_comp_sheet.cell(i, 7).value:
+	# 			client_name = port_comp_sheet.cell(i, 8).value
+	# 	except TypeError:
+	# 		# Because of the 'in' clause, this will error. Could be replaced with == when template is fully resolved.
+	# 		pass
+	# margetts_fund = " ".join(margetts_fund)
+	# output_sheet.cell(row=written_row, column=1).value = "Margetts Risk Rated " + margetts_fund
+	# output_sheet.cell(row=written_row, column=2).value = str(round(margetts_ocf * 100, 2)) + "%"
+	# written_row += 1
+	# output_sheet.cell(row=written_row, column=1).value = client_name + " portfolio (weighted average underlying OCF)"
+	# output_sheet.cell(row=written_row, column=2).value = str(round(client_ocf * 100, 2)) + "%"
+	# DOCUMENT.save(FILENAME[:-5] + " Output.xlsx")
 
 
 def higher_lower_calc(var):
