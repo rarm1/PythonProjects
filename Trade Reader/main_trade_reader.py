@@ -1,4 +1,3 @@
-import csv
 import logging
 import os
 import pathlib
@@ -12,31 +11,26 @@ from Resources import constants
 from Resources import file_id_reader
 from Resources import trade_writer
 
+logging.basicConfig(filename='Resources/Trade_reader.log', format='%(asctime)s - %(message)s',
+					level=logging.INFO)
 HEADERS_GENERATOR = ['FMDealingCode', 'TradeIdentifier', 'TradeFileDate', 'SchemeIdentifier', 'SecurityName',
                      'SecurityIdentifier', 'NewSecurity', 'Direction', 'DealType', 'Value',
                      'SettlementCurrency', 'PreviouslyReported', 'Notes',
                      'Scheme from Rebalancer (DELETE AFTER VERIFICATION)',
                      'Scheme from PID lookup sheet (DELETE AFTER VERIFICATION)']
 
+
+
+
+
 class TradeReader:
 	def __init__(self):
+		self.trade_df = None
 		self.list_of_trades = []
-		self.configure_logging()
 		self.path = self.set_path()
 		trade_writer.fundmanager_selection()
-	
-	@staticmethod
-	def write_csv(filename, data):
-		with open(filename, 'w', newline='') as file:
-			writer = csv.writer(file)
-			for row in data:
-				writer.writerow(row)
-	
-	@staticmethod
-	def configure_logging():
-		logging.basicConfig(filename='Resources/Trade_reader.log', format='%(asctime)s - %(message)s',
-		                    level=logging.INFO)
-	
+
+
 	@staticmethod
 	def set_path():
 		directory = f'Rebalancing {trade_writer.FOLDER_DATE}_TRAIL_DONOTPLACE'
@@ -97,7 +91,6 @@ class TradeReader:
 	def process_trades(self, counters, all_trades):
 		if counters["total_trades"]:
 			trades = trade_writer.automated_trading_array_generator(all_trades)
-			# counters["total_trades"] += len(self.list_of_trades)
 			if not len(trades) == 0:
 				self.list_of_trades.extend(trades)
 		return counters
@@ -122,13 +115,19 @@ class TradeReader:
 		try:
 			if counters['total_trades'] != 0:
 				# todo: here I want to check the broker trades. And amend the values with df manipulation.
-				trade_df = pd.DataFrame(self.list_of_trades, columns=HEADERS_GENERATOR)
-				# I need to search this dataframe for the deal type being units and then change the value to the
-				# amount of shares generated from the function that is in broker email as it is.
-				trade_filename = trade_writer.main_writer(trade_df)
+				self.trade_df = pd.DataFrame(self.list_of_trades, columns=HEADERS_GENERATOR)
+				self.id_broker_trades()
+
+				trade_filename = trade_writer.main_writer(self.trade_df, HEADERS_GENERATOR)
 				self.copy_file_to_path(trade_filename, read_only=True)
 		except AttributeError as e:
 			logging.error("Error occured" + str(e))
+
+	def id_broker_trades(self):
+		# In here is where I can get all the tickers from the isins which I can save and then init an instance of the
+		# price finder class. Then I can get the prices and modify the gross consideration of the trade to be the
+		# quantity of units of the trade.
+		pass
 
 if __name__ == "__main__":
 	trade_processor = TradeReader()

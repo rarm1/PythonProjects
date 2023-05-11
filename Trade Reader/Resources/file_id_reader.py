@@ -1,5 +1,3 @@
-# TODO: Remove single use values
-# TODO: Refactor to be OO
 import os
 import sys
 

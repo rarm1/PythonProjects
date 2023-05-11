@@ -3,15 +3,16 @@ from datetime import date
 from os.path import exists
 
 import openpyxl as xl
-import pandas as pd
 
 # Variable initialisation
 global MODIFIED_FILENAME, WRITER_SHEET, READER_SHEET, READER_DOC, NON_BROKER_FILENAME, BROKER_FILENAME, FUND_MANAGER
 TRADES = 0
 
-SCHEME_LOOKUP_DOC = xl.load_workbook("X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Trade Reader\Resources\scheme_list_desig.xlsm")
+SCHEME_LOOKUP_DOC = xl.load_workbook("X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\Pycharm"
+									 "Projects\Trade Reader\Resources\scheme_list_desig.xlsm")
 SCHEME_SHEET = SCHEME_LOOKUP_DOC['Source']
-ISIN_TO_TICKER_PATH = 'X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Trade Reader\Resources\ISIN_to_Ticker.xlsx'
+ISIN_TO_TICKER_PATH = 'X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Trade ' \
+					  'Reader\Resources\ISIN_to_Ticker.xlsx'
 ISIN_TO_TICKER_DOC = xl.load_workbook(ISIN_TO_TICKER_PATH, data_only=True)
 ISIN_TO_TICKER_SHEET = ISIN_TO_TICKER_DOC['Sheet1']
 FOLDER_DATE = date.today().strftime("%Y%m%d")
@@ -93,7 +94,7 @@ def _value_of_trade(deal_type, trade):
 	elif "cash" in deal_type.lower():
 		return abs(trade.offset(0, 2).value)
 	elif "unit" in deal_type.lower():
-		pass
+		return abs(trade.offset(0, 2).value)
 
 
 def _trade_type(trade):
@@ -109,8 +110,8 @@ def _trade_type(trade):
 				input("Press any key to continue, the program will exit after this and allow for secondary checks.")
 				sys.exit("THERE HAS BEEN A PROBLEM WITH SELL ALL'S NOT BEING NOTED IN NOTES AND/OR VALUATION"
 				         "PLEASE RESOLVE THIS ISSUE BEFORE CONTINUING.")
-		elif "broker" in _notes_value(trade).lower() or "etf" in _notes_value(trade).lower():
-			return "Unit"
+	elif "broker" in _notes_value(trade).lower() or "etf" in _notes_value(trade).lower():
+		return "Unit"
 	return "Cash"
 
 
@@ -181,15 +182,14 @@ def automated_trading_array_generator(trade_array):
 		return trades
 
 
-def main_writer(df):
-	global NON_BROKER_FILENAME, HEADERS_GENERATOR
+def main_writer(df, headers):
+	global NON_BROKER_FILENAME
 	print(F"In here. {df}")
 	NON_BROKER_FILENAME = str('Unchecked_' + FUND_MANAGER + '_' + date.today().strftime("%Y%m%d") + '.csv')
 	if exists(NON_BROKER_FILENAME):
 		headers = False
 		mode = 'a'
 	else:
-		headers = HEADERS_GENERATOR
 		mode = 'w'
 	df.to_csv(NON_BROKER_FILENAME, index=False, mode=mode, header=headers)
 	return NON_BROKER_FILENAME

@@ -2,16 +2,15 @@ from datetime import date, datetime
 
 import docx
 
+today = datetime.now()
+user_input = input("What is the date of the AOL? (Press Enter to use today's date)")
+if user_input != "":
+	today = datetime.strptime(user_input, "%d/%m/%Y")
+else:
+	date_format = date(day=today.day, month=today.month, year=today.year).strftime('%A %d %B %Y')
 
 class Constants:
-	"""
-
-	"""
-	
 	def __init__(self):
-		self.today = datetime.now()
-		self.date_format = date(day=self.today.day, month=self.today.month, year=self.today.year).strftime('%A %d %B '
-		                                                                                                   '%Y')
 		self.designations = [116011, 116018, 116043, 116048]
 		self.designations_str = [str(i) for i in self.designations]
 		self.Designation_List = ", ".join(self.designations_str)

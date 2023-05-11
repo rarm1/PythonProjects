@@ -5,8 +5,8 @@ import openpyxl as xl
 import pandas as pd
 
 from assets import file_id_reader
-from variables import Intro
-from Introduction import Intro
+import variables
+# from Introduction import Intro
 
 # TODO: Does the 5, 3, 1 and YTD comparisons need to have seperate thresholds for outperformance.
 #  I feel like they do because they are different time periods.
@@ -56,8 +56,11 @@ def harpoon():
 	"""
 	global DOCUMENT
 	port_hold_df, port_comp_df, perf_comp_df = obtain_file()
-	intro = Intro(port_hold_df, port_comp_df, perf_comp_df)
+	intro = variables.Intro(port_hold_df, port_comp_df, perf_comp_df)
 	print(intro.intro_text)
+	asset_allocation = variables.AssetAllocation(port_hold_df, port_comp_df, perf_comp_df)
+	print(asset_allocation.asset_allocation_text)
+
 	# variable_definitions()
 	# written_row = 1
 	# output_sheet = DOCUMENT.create_sheet(title="OUTPUT")

@@ -82,3 +82,6 @@ ERROR:root:Error occured[Errno 13] Permission denied: 'Unchecked_DMITRY_28-09-20
 2023-03-29 19:09:56,333 - Error occuredmodule 'trade_writer' has no attribute 'BROKER_FILENAME'
 2023-03-29 19:11:10,829 - Error occuredmodule 'trade_writer' has no attribute 'NON_BROKER_FILENAME'
 2023-03-29 19:11:10,845 - Error occuredmodule 'trade_writer' has no attribute 'BROKER_FILENAME'
+2023-04-21 11:43:48,949 - Error occured'Series' object has no attribute 'lower'
+2023-04-21 11:45:02,483 - Error occured'Series' object has no attribute 'lower'
+2023-04-21 11:55:00,999 - Error occured[Errno 13] Permission denied: 'X:/Fund Management/Dealing and Rebalancing\\Rebalancing 20230421_TRAIL_DONOTPLACE\\Unchecked_DMITRY_20230421.csv'

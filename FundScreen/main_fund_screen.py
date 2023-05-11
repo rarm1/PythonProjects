@@ -13,22 +13,6 @@
 # TODO: Review value growth score brackets. Review Luke's style box output to see whether this couldbe more repliable
 #  than the "value growth score long" datapoint.
 # TODO: Collect dates from somewhere.
-
-"""
-Add labels for size and style.
-
-MSCI Europe Large Growth for example for performance on the Large Growth indices rather than IA sector
-
-Trackers should form their separate list
-
-Basically what funds are generating Alpha
-
-Move through the process considering validating our methodology as we go rather than blindly following.
-
-take 3 groups, top six, middle 6, bottom six.
-
-Look at top 18 by groups of 6. Is the top 6 better than second 6 etc.
-"""
 import output
 from data_processing import DataProcessing
 # Imports
