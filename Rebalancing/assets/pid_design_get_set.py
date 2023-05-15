@@ -1,0 +1,19 @@
+import pandas as pd
+class PIDScheme:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+        df = pd.read_excel(r"X:\Fund Management\Fund Management Team Files\FM Personal "
+                           r"Folders\Richard\PycharmProjects\Rebalancing\assets\scheme_list_desig.xlsm",
+                           sheet_name="Source", engine='openpyxl', skiprows=2)
+        df.columns = df.iloc[0]
+        df.drop(index=df.index[:1], inplace=True)
+        self.df = df[["pID", "Designation"]]
+
+
+    def get_designation(self, pid):
+        return self.df[self.df["pID"] == pid]["Designation"].values[0]
+
+
+if __name__ == '__main__':
+    pid_scheme = PIDScheme()
+    print(pid_scheme.get_designation(pid=1))

@@ -1,4 +1,5 @@
 from constants import Constants
+import os
 
 
 class OutputDocument:
@@ -13,11 +14,13 @@ class OutputDocument:
 		
 		self.Location = None
 		self.Constants = Constants()
-	
+
 	def create_files(self):
 		try:
 			output_path = self.Location / self.AOL_Filename
 			print(str(output_path))
+			output_directory = output_path.parent
+			os.makedirs(output_directory, exist_ok=True)
 			self.Constants.AOL_Template_Doc.save(str(output_path))
 			self.AOL_Written_File_Path = str(output_path)
 		except PermissionError as pe:
@@ -28,3 +31,7 @@ class OutputDocument:
 			self.DA_Written_File_Path = str(output_path)
 		except PermissionError as pe:
 			print(pe)
+
+	@staticmethod
+	def sanitize_filename(filename):
+		return ''.join(c if c.isalnum() else '_' for c in filename)

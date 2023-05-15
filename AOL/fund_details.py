@@ -28,4 +28,5 @@ class FundDetails:
 	
 	def variable_definition(self, row):
 		self.Fund_Name = self.Reader_Sheet.cell(row=row, column=self.Constants.FundNameColumn).value
+		# self.Fund_Name = ''.join(c if c.isalnum() else '_' for c in self.Fund_Name)
 		self.ISIN = self.Reader_Sheet.cell(row=row, column=self.Constants.ISINColumn).value

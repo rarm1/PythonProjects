@@ -69,8 +69,10 @@ def process_fund(row):
 		fund = FundDetails(row)
 		out = OutputDocument()
 		agent = Agency(row)
-		out.AOL_Filename = f'{fund.Fund_Name} AOL {Constants().Designation_List}.docx'
-		out.DA_Filename = f'{fund.Fund_Name} DA {Constants().Designation_List}.docx'
+		out.AOL_Filename = f'{fund.Fund_Name} AOL.docx'
+		# out.AOL_Filename = f'{fund.Fund_Name} AOL {Constants().Designation_List}.docx'
+		out.DA_Filename = f'{fund.Fund_Name} DA.docx'
+		# out.DA_Filename = f'{fund.Fund_Name} DA {Constants().Designation_List}.docx'
 		current_path = str(pathlib.Path().parent.resolve())
 		current_path = str(current_path)
 		out.Location = pathlib.Path(current_path, fund.Fund_Name)

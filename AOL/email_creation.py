@@ -65,7 +65,7 @@ class Email:
 				filename = "/".join(file.split("\\")[-1:])
 				part.add_header('Content-Disposition', f'attachment; filename={filename}')
 				msg.attach(part)
-		with open(str(output.Location) + self.FundName + ".eml", 'wb') as outfile:
+		with open(os.path.join(output.Location, self.FundName + ".eml"), 'wb') as outfile:
 			outfile.write(msg.as_bytes())
 	
 	def subject_writer(self):
