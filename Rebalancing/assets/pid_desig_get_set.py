@@ -7,13 +7,17 @@ class PIDScheme:
                            sheet_name="Source", engine='openpyxl', skiprows=2)
         df.columns = df.iloc[0]
         df.drop(index=df.index[:1], inplace=True)
-        self.df = df[["pID", "Designation"]]
-
+        self.df = df[["pID", "PortfolioLongName", "Designation"]]
 
     def get_designation(self, pid):
-        return self.df[self.df["pID"] == pid]["Designation"].values[0]
+        return int(self.df[self.df["pID"] == pid]["Designation"].values[0])
+
+    def get_name(self, pid):
+        return self.df[self.df["pID"] == pid]["PortfolioLongName"].values[0]
 
 
 if __name__ == '__main__':
     pid_scheme = PIDScheme()
+
     print(pid_scheme.get_designation(pid=1))
+    print(pid_scheme.get_name(pid=1))
