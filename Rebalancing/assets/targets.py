@@ -1,41 +1,34 @@
+# TODO: This is going to be relatively temporary as I will eventually be getting the targets from Model Database.
 import pandas as pd
+import json
 class Targets:
     def __init__(self, scheme, schemes_dict):
-        # PRIMA portfolio names are Cautious, Balanced and adventurous
-        rr_filename = r"X:\Fund Management\Regulated Schemes\Risk Rated\Dealing and Rebalancing\Risk Rated Targets Updated 15 05 2023.xlsx"
-        prima_filename = r"X:\Fund Management\Regulated Schemes\PRIMA\Rebalancers\Dealing Targets\PRIMA Targets 15 05 2023.xlsx"
-        clarion_filename = r"X:\Fund Management\Regulated Schemes\Clarion\Rebalancing\Clarion Targets 15 05 2023.xlsx"
-        if scheme == "Margetts":
-            filename = pd.ExcelFile(rr_filename)
-        elif scheme == "Prima":
-            filename = pd.ExcelFile(prima_filename)
-        elif scheme == "Clarion":
-            filename = pd.ExcelFile(clarion_filename)
+        with open(r"assets\config.json") as f:
+            config = json.load(f)
+        filenames = config["filenames"]
+        # filenames = {
+        # #     "Margetts": r"X:\Fund Management\Regulated Schemes\Risk Rated\Dealing and Rebalancing\Risk Rated Targets Updated 15 05 2023.xlsx",
+        # #     "Prima": r"X:\Fund Management\Regulated Schemes\PRIMA\Rebalancers\Dealing Targets\PRIMA Targets 15 05 2023.xlsx",
+        # #     "Clarion": r"X:\Fund Management\Regulated Schemes\Clarion\Rebalancing\Clarion Targets 15 05 2023.xlsx"
+        # }
+        filename = filenames.get(scheme)
+        if filename is None:
+            raise ValueError(f"No filename found for scheme {scheme}")
 
         columns_to_use = ['ISIN', 'Fund Name', 'Target', 'Holding Change', 'Investment Area', 'Dealing Method']
         portfolio_names = list(schemes_dict[scheme].keys())
-        targets = pd.read_excel(filename, sheet_name=portfolio_names, usecols=columns_to_use)
-        if scheme == "Margetts":
-            prov_targets = targets['Providence']
-            sel_targets = targets['Select']
-            int_targets = targets['International']
-            ven_targets = targets['Venture']
-            self.designation_map = {392125: prov_targets, 392126: sel_targets, 392124: int_targets, 392128: ven_targets}
-        elif scheme == "Prima":
-            cautious_targets = targets['Cautious']
-            balanced_targets = targets['Balanced']
-            adventurous_targets = targets['Adventurous']
-            self.designation_map = {253275: cautious_targets, 253277: balanced_targets, 253278: adventurous_targets}
-        elif scheme == "Clarion":
-            prudence_targets = targets['Prudence']
-            meridian_targets = targets['Meridian']
-            explorer_targets = targets['Explorer']
-            navigator_targets = targets['Navigator']
-            self.designation_map = {397789: prudence_targets, 397874: meridian_targets, 397792: explorer_targets, 253302: navigator_targets}
+        try:
+            targets = pd.read_excel(filename, sheet_name=portfolio_names, usecols=columns_to_use)
+        except FileNotFoundError:
+            print(f"File {filename} not found.")
+            return
 
+        self.designation_map = {}
+        for portfolio_name, designation in schemes_dict[scheme].items():
+            self.designation_map[designation] = targets[portfolio_name]
 
     def get_df_by_designation(self, designation):
-        return self.designation_map[designation]
+        return self.designation_map.get(designation)
 
 
 if __name__ == '__main__':
