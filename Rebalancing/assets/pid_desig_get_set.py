@@ -15,6 +15,11 @@ class PIDScheme:
     def get_name(self, pid):
         return self.df[self.df["pID"] == pid]["PortfolioLongName"].values[0]
 
+    def get_pid(self, designation):
+        df = self.df[self.df["Designation"].notna()].copy()
+
+        return df[df['Designation'].dropna().astype(int) == designation.astype(int)]["pID"].values[0]
+
 
 if __name__ == '__main__':
     pid_scheme = PIDScheme()

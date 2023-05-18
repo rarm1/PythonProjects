@@ -2,42 +2,42 @@ import pandas as pd
 from pathlib import Path
 # Define your constants here
 FUND_SELL_LIMIT = 0.01
-FUND_BUY_LIMIT = -0.01
 SECTOR_SELL_LIMIT_TRADED = 0.002
-SECTOR_SELL_LIMIT_NOT_TRADED = 0.005
 BUCKET_SELL_LIMIT = 0.005
-BUCKET_BUY_LIMIT = -0.005
-from write_to_trade_file import TradeWriter
+ASSET_GROUPS = {
+    "Bonds": ["Bond", "Property", "Commodity", "Absolute Return"],
+    "Equities": ["UK", "UK EQUITY INCOME", "ASIA PACIFIC", "EUROPE", "USA", "GLOBAL", "EMERGING MARKETS",
+                 "IA 20-60%", "IA 0-35%", "JAPAN"],
+    "Cash/Money Markets": ["CASH/MONEY MARKETS"],
+}
+from Rebalancing.assets.write_to_trade_file import TradeWriter
 
-def set_pandas_options():
-    pd.set_option('display.max_columns', 50)
-    pd.set_option('display.max_colwidth', 100)
-    pd.set_option('display.max_rows', None)
-    pd.options.display.float_format = '{:.4f}'.format
 class TradingAlgo:
-    def __init__(self, df_in, fund_nav):
+    def __init__(self, df_in, fund_nav, asset_groups=None):
+        if asset_groups is None:
+            asset_groups = ASSET_GROUPS
+        self.asset_groups = asset_groups
         self.nav = fund_nav
         self.df = df_in
         self._prepare_df_for_trades()
         max_iterations = 100  # Set a maximum number of iterations
         iteration = 0  # Initialize the iteration counter
-
+        #
         while not self._is_on_target():
-            self._trade("Fund Over/Under", "Fund Over/Under", FUND_SELL_LIMIT)
+            fund = self._trade("Fund Over/Under", "Fund Over/Under", FUND_SELL_LIMIT)
             if self._is_on_target():
                 break
-            self._trade("Sector Over/Under", "Sector Over/Under", SECTOR_SELL_LIMIT_TRADED)
+            sector = self._trade("Sector Over/Under", "Sector Over/Under", SECTOR_SELL_LIMIT_TRADED)
             if self._is_on_target():
                 break
-            self._trade("Bucket Over/Under", "Bucket Over/Under", BUCKET_SELL_LIMIT)
+            bucket = self._trade("Bucket Over/Under", "Bucket Over/Under", BUCKET_SELL_LIMIT)
             if self._is_on_target():
                 break
-
             iteration += 1  # Increment the iteration counter
             if iteration >= max_iterations:  # If maximum iterations reached, break out of the loop
                 print("Maximum iterations reached. Exiting the loop.")
+                print(self.df.to_string())
                 break
-        self.df.to_csv("Output.csv", index=False)
 
     def _is_on_target(self):
         condition_fund = (self.df["Fund Over/Under"] != "On Target").any()
@@ -47,32 +47,33 @@ class TradingAlgo:
         return not (condition_fund or condition_sector or condition_bucket)
 
     def _prepare_df_for_trades(self):
-        # Add two columns, one for whether the fund has been traded, one for the trade amount.
+        self.df["Tradeable"] = True
         self.df["Traded"] = False
         self.df["Trade Amount"] = 0.00
         self.df["Initial Market Value"] = self.df["Base Market Value"]
-        # If a target is 0 then the fund should have Fund Over/Under set to Sell.
         self.df.loc[self.df["% Target"] == 0, "Fund Over/Under"] = "Sell"
         self._recalculate_percentages()
+        # Check whether any funds should be sold completed. If so, sell them and recalculate percentages removing
+        # this fund from the calculation.
+        self.sell_all_fund()
 
     def _trade(self, entity_col, action_col, threshold):
-        entities_to_trade = self.df[self.df[entity_col] != "On Target"].copy()
+        entities_to_trade = self.df[(self.df[entity_col] != "On Target") & (self.df['Tradeable'] == True)].copy()
         unique_entities = entities_to_trade[entity_col].unique()
-
-        for unique_entity in unique_entities:
-            entity_to_trade = entities_to_trade[entities_to_trade[entity_col] == unique_entity].copy()
-            action = entity_to_trade[action_col].iloc[0]
-            ascending_order = True if action == "Buy" else False
-
-            fund_to_trade = entity_to_trade.sort_values(by="% Fund Difference", ascending=ascending_order)
-            fund_to_trade = fund_to_trade.iloc[[0]]
-
-            difference = fund_to_trade["% Fund Difference"].iloc[0] - fund_to_trade["% Sector Difference"].iloc[0]
-            trade_amount = self._calculate_trade_amount(action, fund_to_trade, difference, threshold)
-
-            fund_to_trade["Trade Amount"] = trade_amount
-            self.df = self._apply_trades(self.df, fund_to_trade)
-            self._recalculate_percentages()
+        for idx, unique_entity in enumerate(unique_entities):
+            if idx == 0:
+                entity_to_trade = entities_to_trade[entities_to_trade[entity_col] == unique_entity].copy()
+                action = entity_to_trade[action_col].iloc[0]
+                ascending_order = True if action == "Buy" else False
+                fund_to_trade = entity_to_trade.sort_values(by="% Fund Difference", ascending=ascending_order)
+                fund_to_trade = fund_to_trade.iloc[[0]]
+                difference = fund_to_trade["% Fund Difference"].iloc[0] - fund_to_trade["% Sector Difference"].iloc[0]
+                trade_amount = self._calculate_trade_amount(action, fund_to_trade, difference, threshold)
+                fund_to_trade["Trade Amount"] = trade_amount
+                self.df = self._apply_trades(self.df, fund_to_trade)
+                self._recalculate_percentages()
+                return True
+        return False
 
     def _calculate_trade_amount(self, action, fund_to_trade, difference, threshold):
         multiplier = -1 if action == "Sell" else 1
@@ -90,31 +91,58 @@ class TradingAlgo:
         df['Designation'] = df['Designation'].astype(int)
         return df
 
-
     def _recalculate_percentages(self):
+        self.df["Designation"] = self.df["Designation"].astype(int)
         self.df["% Holding"] = self.df["Base Market Value"] / self.nav
         self.df["% Fund Difference"] = self.df["% Holding"] - self.df["% Target"]
+
         self.df['% Sector Target'] = self.df.groupby('Investment Area')['% Target'].transform('sum')
         self.df['% Sector Holding'] = self.df.groupby('Investment Area')['% Holding'].transform('sum')
         self.df['% Sector Difference'] = self.df['% Sector Holding'] - self.df['% Sector Target']
+        self.df['Sector Traded'] = self.df.groupby('Investment Area')['Traded'].transform('any')
+
         self.df['Bucket'] = self.df['Investment Area'].str.lower().map(
-            lambda x: next((k for k, v in asset_groups.items() if x in [item.lower() for item in v]), None))
+            lambda x: next((k for k, v in self.asset_groups.items() if x in [item.lower() for item in v]), None))
         self.df['% Bucket Target'] = self.df.groupby('Bucket')['% Target'].transform('sum')
         self.df['% Bucket Holding'] = self.df.groupby('Bucket')['% Holding'].transform('sum')
         self.df['% Bucket Difference'] = self.df['% Bucket Holding'] - self.df['% Bucket Target']
-        self.df['Fund Over/Under'] = self.df['% Fund Difference'].map(lambda x: "Sell" if x > 0.01 else "Buy" if x <
-        -0.01 else "On Target")
+
+        # Now use 'Sector Traded' instead of 'Traded' in the sector_over_under function
         def sector_over_under(row):
-            limit = 0.002 if row["Traded"] else 0.005
-            return "Sell" if row['% Sector Difference'] > limit else "Buy" if row['% Sector Difference'] < -limit else "On Target"
+            limit = 0.002 if row['Sector Traded'] else 0.005
+            return "Sell" if row['% Sector Difference'] > limit \
+                else "Buy" if row['% Sector Difference'] < -limit \
+                else "On Target"
+        self.df['Fund Over/Under'] = self.df['% Fund Difference'].map(
+            lambda x: "Sell" if x > 0.01 else "Buy" if x < -0.01 else "On Target"
+        )
         self.df['Sector Over/Under'] = self.df.apply(sector_over_under, axis=1)
-        self.df['Bucket Over/Under'] = self.df['% Bucket Difference'].map(lambda x: "Sell" if x > 0.005 else "Buy" if
-        x < -0.005 else "On Target")
-        self.df["Designation"] = self.df["Designation"].astype(int)
+        self.df['Bucket Over/Under'] = self.df['% Bucket Difference'].map(
+            lambda x: "Sell" if x > 0.005 else "Buy" if x < -0.005 else "On Target"
+        )
+
+    def sell_all_fund(self):
+        if self.df["Fund Over/Under"].any():
+            # Create a dataframe of funds to sell
+            funds_to_sell = self.df[self.df["% Target"] == 0].copy()
+            funds_to_sell["Trade Amount"] = funds_to_sell["Base Market Value"] * -1
+            funds_to_sell["Tradeable"] = False
+            self.df = self._apply_trades(self.df, funds_to_sell)
+            self._recalculate_percentages()
+            # entities_to_trade = self.df[self.df[entity_col] == "Sell"].copy()
+            # if not entities_to_trade.empty:
+            #     # Iterate through this non-empty dataframe
+            #     for index, row in entities_to_trade.iterrows():
+            #         if row["% Target"] == 0 and row["% Holding"] != 0:
+            #             trade_amount = self._calculate_trade_amount("Sell", row, "row['% Holding']", "SellAll")
+            #             fund_to_trade = row.copy()
+            #             fund_to_trade["Trade Amount"] = trade_amount
+            #             self.df = self._apply_trades(self.df, fund_to_trade)
+            #             self._recalculate_percentages()
+            #             return
 
 
 if __name__ == '__main__':
-    set_pandas_options()
     asset_groups = {
         "Bonds": ["Bond", "Property", "Commodity", "Absolute Return"],
         "Equities": ["UK", "UK EQUITY INCOME", "ASIA PACIFIC", "EUROPE", "USA", "GLOBAL", "EMERGING MARKETS",
@@ -125,5 +153,6 @@ if __name__ == '__main__':
     input_df = pd.read_csv(r"X:\Fund Management\Fund Management Team Files\FM Personal "
                      r"Folders\Richard\PycharmProjects\Rebalancing\Clarion\Navigator.csv")
     ta = TradingAlgo(input_df, 41550166.01)
+    print(ta.df.to_string())
     TradeWriter(ta.df)
 

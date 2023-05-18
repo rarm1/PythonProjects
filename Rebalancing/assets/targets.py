@@ -23,7 +23,13 @@ class Targets:
             print(f"File {filename} not found.")
             return
 
-        self.designation_map = {}
+        self.designation_map = {
+        "Margetts": {"Providence": 392125, "Select": 392126, "International": 392124, "Venture": 392128},
+        "Prima": {"Cautious": 253275, "Balanced": 253277, "Adventurous": 253278},
+        "Clarion": {"Explorer": 397792, "Meridian": 397874, "Navigator": 253302, "Prudence": 397789},
+        "IBOSS": {"1": 564536, "2": 564541, "4": 564542, "6": 564543},
+        "Tempus": {"Universal": 444780}
+    }
         for portfolio_name, designation in schemes_dict[scheme].items():
             self.designation_map[designation] = targets[portfolio_name]
 

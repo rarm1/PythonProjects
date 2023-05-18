@@ -43,7 +43,7 @@ def create_new_document(filepath, fund, agent):
 				replacement_text = str
 				to_search = search[1:-1]
 				if "date" in to_search.lower():
-					replacement_text = r.text.replace(search, const.date_format)
+					replacement_text = r.text.replace(search, str(const.date_format))
 				elif "fund_name" in to_search.lower():
 					replacement_text = r.text.replace(search, fund.Fund_Name)
 				elif "isin" in to_search.lower():

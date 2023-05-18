@@ -1,12 +1,11 @@
 import pandas as pd
 import openpyxl as xl
-filename = r"X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Rebalancing" \
-           r"\assets\FM Data for Rebalance 4 (Flat v2).xlsx"
+filename = r"X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Rebalancing\assets\Portfolio Data.xlsx"
 class GetPositions:
     def __init__(self):
         self.positions_df = self._def_fund_positions_df()
         self.scheme_totals_df = self._def_scheme_totals()
-        self.dilution_df = self._def_dilution_df()
+        # self.dilution_df = self._def_dilution_df()
 
     @staticmethod
     def _def_fund_positions_df():
@@ -18,7 +17,6 @@ class GetPositions:
     @staticmethod
     def _def_scheme_totals():
         df = pd.read_excel(filename, sheet_name="Scheme_Totals", engine='openpyxl')
-        df.drop(index=df.index[:1], inplace=True)
         df["Fund Number"] = df["Fund Number"].astype(int)
         return df
 
