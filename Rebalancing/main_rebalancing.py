@@ -1,10 +1,10 @@
 import pandas as pd
 import os
-from Rebalancing.assets.targets import Targets
-from Rebalancing.assets.get_positions import GetPositions
-from Rebalancing.assets.trading_algo import TradingAlgo
-from Rebalancing.assets.pid_desig_get_set import PIDScheme
-from Rebalancing.assets.write_to_trade_file import TradeWriter
+from assets.targets import Targets
+from assets.get_positions import GetPositions
+from assets.trading_algo import TradingAlgo
+from assets.pid_desig_get_set import PIDScheme
+from assets.write_to_trade_file import TradeWriter
 
 pd.set_option('display.max_columns', 50)
 pd.set_option('display.max_colwidth', 100)

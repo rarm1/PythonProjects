@@ -10,7 +10,7 @@ ASSET_GROUPS = {
                  "IA 20-60%", "IA 0-35%", "JAPAN"],
     "Cash/Money Markets": ["CASH/MONEY MARKETS"],
 }
-from Rebalancing.assets.write_to_trade_file import TradeWriter
+from write_to_trade_file import TradeWriter
 
 class TradingAlgo:
     def __init__(self, df_in, fund_nav, asset_groups=None):
@@ -129,17 +129,6 @@ class TradingAlgo:
             funds_to_sell["Tradeable"] = False
             self.df = self._apply_trades(self.df, funds_to_sell)
             self._recalculate_percentages()
-            # entities_to_trade = self.df[self.df[entity_col] == "Sell"].copy()
-            # if not entities_to_trade.empty:
-            #     # Iterate through this non-empty dataframe
-            #     for index, row in entities_to_trade.iterrows():
-            #         if row["% Target"] == 0 and row["% Holding"] != 0:
-            #             trade_amount = self._calculate_trade_amount("Sell", row, "row['% Holding']", "SellAll")
-            #             fund_to_trade = row.copy()
-            #             fund_to_trade["Trade Amount"] = trade_amount
-            #             self.df = self._apply_trades(self.df, fund_to_trade)
-            #             self._recalculate_percentages()
-            #             return
 
 
 if __name__ == '__main__':

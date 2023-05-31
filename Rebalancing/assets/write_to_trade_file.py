@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from Rebalancing.assets.pid_desig_get_set import PIDScheme
+from pid_desig_get_set import PIDScheme
 
 HEADERS = ["FMDealingCode", "TradeIdentifier", "TradeFileDate", "SchemeIdentifier", "SecurityName",
            "SecurityIdentifier", "NewSecurity", "Direction", "DealType", "Value",
