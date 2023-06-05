@@ -1,3 +1,4 @@
+# TODO: Take unit trades and adjust the value depending on the cost of units.
 import logging
 import os
 import pathlib

@@ -1,4 +1,4 @@
-from constants import Constants
+from AOL.Resources.constants import Constants
 import os
 
 
@@ -18,7 +18,6 @@ class OutputDocument:
 	def create_files(self):
 		try:
 			output_path = self.Location / self.AOL_Filename
-			print(str(output_path))
 			output_directory = output_path.parent
 			os.makedirs(output_directory, exist_ok=True)
 			self.Constants.AOL_Template_Doc.save(str(output_path))

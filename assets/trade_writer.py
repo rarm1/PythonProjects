@@ -472,67 +472,67 @@ def main_writer(trades):
 
 
 # This function writes the finished array to a csv that consists of the fund_managers name, and the date.
-def broker_trade_writer(trades):
-	"""
-	Takes in an array of trades, writes these trades to a .csv file.
-	:param trades: Array of all trades.
-	:return: No return statement.
-	"""
-	global BROKER_FILENAME
-	# Do not create empty files.
-	if len(trades) == 0:
-		return
-	elif not len(trades) == 0:
-		# This creates a dateaframe from the list of lists generated.
-		df = pd.DataFrame(trades)
-		req_date: str = date.today().strftime("%d-%m-%Y")
-		# Use the variables defined above to generate a csv document using
-		# functions that're built into the pandas repository
-		if FUND_MANAGER == "CLARION":
-			BROKER_FILENAME = "Unchecked_ELIZABETH_" + req_date + '_broker_trades.csv'
-		else:
-			BROKER_FILENAME = 'Unchecked_' + FUND_MANAGER + '_' + req_date + '_broker_trades.csv'
-		# If this file exists, then there should not be any additional headers, and it should append, rather than
-		# overwrite.
-		if exists(BROKER_FILENAME):
-			headers = False
-			mode = 'a'
-		# If the file doesn't exist then use the header array and use the 'writer' file.
-		else:
-			headers = BROKER_HEADERS_GENERATOR
-			mode = 'w'
-		df.to_csv(BROKER_FILENAME, index=False, mode=mode, header=headers)
-		return BROKER_FILENAME
+# def broker_trade_writer(trades):
+# 	"""
+# 	Takes in an array of trades, writes these trades to a .csv file.
+# 	:param trades: Array of all trades.
+# 	:return: No return statement.
+# 	"""
+# 	global BROKER_FILENAME
+# 	# Do not create empty files.
+# 	if len(trades) == 0:
+# 		return
+# 	elif not len(trades) == 0:
+# 		# This creates a dateaframe from the list of lists generated.
+# 		df = pd.DataFrame(trades)
+# 		req_date: str = date.today().strftime("%d-%m-%Y")
+# 		# Use the variables defined above to generate a csv document using
+# 		# functions that're built into the pandas repository
+# 		if FUND_MANAGER == "CLARION":
+# 			BROKER_FILENAME = "Unchecked_ELIZABETH_" + req_date + '_broker_trades.csv'
+# 		else:
+# 			BROKER_FILENAME = 'Unchecked_' + FUND_MANAGER + '_' + req_date + '_broker_trades.csv'
+# 		# If this file exists, then there should not be any additional headers, and it should append, rather than
+# 		# overwrite.
+# 		if exists(BROKER_FILENAME):
+# 			headers = False
+# 			mode = 'a'
+# 		# If the file doesn't exist then use the header array and use the 'writer' file.
+# 		else:
+# 			headers = BROKER_HEADERS_GENERATOR
+# 			mode = 'w'
+# 		df.to_csv(BROKER_FILENAME, index=False, mode=mode, header=headers)
+# 		return BROKER_FILENAME
 
-
-# This generates the list of lists to be written to the csv document.
-def automated_trading_array_generator(trade_array):
-	""" Takes an array of all trade locations. Returns an array that contains all trading information. """
-	non_broker_trades, broker_trades = [], []
-	trade_id = 1
-	constants.READER_SHEET = READER_SHEET
-	for idx, a in enumerate(trade_array, start=1):
-		trade_id = get_trade_value() + idx
-		broker_trade, trial_return = trade_array_generator(idx, a)
-		if broker_trade:
-			broker_trades.append(trial_return)
-		else:
-			non_broker_trades.append(trial_return)
-	
-	else:
-		if not LOCAL_EXEC and len(trade_array) != 0:
-			write_trade_value(trade_id)
-		return non_broker_trades, broker_trades
+#
+# # This generates the list of lists to be written to the csv document.
+# def automated_trading_array_generator(trade_array):
+# 	""" Takes an array of all trade locations. Returns an array that contains all trading information. """
+# 	non_broker_trades, broker_trades = [], []
+# 	trade_id = 1
+# 	constants.READER_SHEET = READER_SHEET
+# 	for idx, a in enumerate(trade_array, start=1):
+# 		trade_id = get_trade_value() + idx
+# 		broker_trade, trial_return = trade_array_generator(idx, a)
+# 		if broker_trade:
+# 			broker_trades.append(trial_return)
+# 		else:
+# 			non_broker_trades.append(trial_return)
+#
+# 	else:
+# 		if not LOCAL_EXEC and len(trade_array) != 0:
+# 			write_trade_value(trade_id)
+# 		return non_broker_trades, broker_trades
 
 
 # This updates the trade number after ever rebalancer that has been read. This adds a stable point in which to rewrite.
 # And doesn't give the user a chance to write trades, and then escape the program without updating the trade quantity.
-def write_trade_value(trade):
-	"""
-
-	:param trade:
-	"""
-	trade_counter_doc = xl.load_workbook(TRADE_ID_FILE)
-	trade_sheet = trade_counter_doc[TRADE_ID_SHEET]
-	trade_sheet.cell(1, 1).value = trade
-	trade_counter_doc.save(TRADE_ID_FILE)
+# def write_trade_value(trade):
+# 	"""
+#
+# 	:param trade:
+# 	"""
+# 	trade_counter_doc = xl.load_workbook(TRADE_ID_FILE)
+# 	trade_sheet = trade_counter_doc[TRADE_ID_SHEET]
+# 	trade_sheet.cell(1, 1).value = trade
+# 	trade_counter_doc.save(TRADE_ID_FILE)

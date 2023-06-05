@@ -22,31 +22,31 @@ class ImportProcessing:
 		self.Filename = file_id_reader.file_name_generator(filename_user)[0]
 		self.def_df()
 		self._clean()
-	
-	def _cleantop(self):
+
+	def _clean(self):
+		print(self.DF)
+		# self._clean_top()
+		# self._drop_na()
+
+	# self.Headers = [header for header in self.DF.iloc[0] if
+	#                 "Return" not in header]
+	# self.clean_columns()
+
+	def _clean_top(self):
 		row_index = self.DF.loc[self.DF.iloc[:, 0] == 'Group/Investment'].index[0]
 		self.DF = self.DF.iloc[row_index:, :].reset_index(drop=True)
 		self.DF.columns = self.DF.iloc[0].tolist()
-	
-	def dropna(self):
+
+	def _drop_na(self):
 		"""
 
 		"""
 		# TODO: Drop if there is no ISIN or Fund name.
-		self.DF.dropna(subset=['Group/Investment', 'ISIN'], inplace=True)
+		self.DF._drop_na(subset=['Group/Investment', 'ISIN'], inplace=True)
 		# for header in self.Headers:
-		#     self.DF.dropna(subset=header, inplace=True)
+		#     self.DF._drop_na(subset=header, inplace=True)
 		self.DF = self.DF.iloc[1:, :].reset_index(drop=True)
-	
-	def _clean(self):
-		self._cleantop()
-		self.dropna()
-		print(self.DF)
-	
-	# self.Headers = [header for header in self.DF.iloc[0] if
-	#                 "Return" not in header]
-	# self.clean_columns()
-	
+
 	def clean_columns(self):
 		"""
 
@@ -73,3 +73,6 @@ class ImportProcessing:
 			self.DF = pd.read_csv(self.Filename, index_col=None)
 		elif "xlsx" in self.Filename:
 			self.DF = pd.read_excel(self.Filename, sheet_name=0, index_col=None)
+
+if __name__ == '__main__':
+	import_processing = ImportProcessing(filetype=".xlsx")

@@ -3,6 +3,7 @@ from datetime import date
 from os.path import exists
 
 import openpyxl as xl
+import pandas as pd
 
 # Variable initialisation
 global MODIFIED_FILENAME, WRITER_SHEET, READER_SHEET, READER_DOC, NON_BROKER_FILENAME, BROKER_FILENAME, FUND_MANAGER
@@ -11,10 +12,9 @@ TRADES = 0
 SCHEME_LOOKUP_DOC = xl.load_workbook("X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\Pycharm"
 									 "Projects\Trade Reader\Resources\scheme_list_desig.xlsm")
 SCHEME_SHEET = SCHEME_LOOKUP_DOC['Source']
-ISIN_TO_TICKER_PATH = 'X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Trade ' \
-					  'Reader\Resources\ISIN_to_Ticker.xlsx'
-ISIN_TO_TICKER_DOC = xl.load_workbook(ISIN_TO_TICKER_PATH, data_only=True)
-ISIN_TO_TICKER_SHEET = ISIN_TO_TICKER_DOC['Sheet1']
+ISIN_TO_TICKER_PATH = 'X:\Fund Management\Fund Management Team Files\FM Personal Folders\Richard\PycharmProjects\Trade Reader\Resources\ISIN_to_Ticker.csv'
+ISIN_TO_TICKER_DOC = pd.read_csv(ISIN_TO_TICKER_PATH)
+# ISIN_TO_TICKER_SHEET = ISIN_TO_TICKER_DOC['Sheet1']
 FOLDER_DATE = date.today().strftime("%Y%m%d")
 FUND_MANAGERS = {
 	"Dmitry Konev": "DMITRY",
