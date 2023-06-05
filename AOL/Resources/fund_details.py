@@ -1,16 +1,15 @@
-from constants import Constants
-from input_document import InputDocument
+from AOL.Resources.constants import Constants
 
 
 class FundDetails:
 	def __init__(self, row):
-		self.Constants = Constants()
-		self.Reader_Sheet = InputDocument().Reader_Sheet
+		self.consts = Constants()
+		self.Reader_Sheet = Constants().Reader_Sheet
 		self.BNYAddress = None
 		self.Fund_Name = None
 		self.ISIN = None
+		self.Designation_List = None
 		self.variable_definition(row)
-		self.Designation_List = self.Constants.Designation_List
 		self.bny_address_finder()
 		self.ADDR = self.BNYAddress
 	
@@ -27,6 +26,7 @@ class FundDetails:
 			pass
 	
 	def variable_definition(self, row):
-		self.Fund_Name = self.Reader_Sheet.cell(row=row, column=self.Constants.FundNameColumn).value
-		# self.Fund_Name = ''.join(c if c.isalnum() else '_' for c in self.Fund_Name)
-		self.ISIN = self.Reader_Sheet.cell(row=row, column=self.Constants.ISINColumn).value
+		self.Fund_Name = self.Reader_Sheet.cell(row=row, column=self.consts.FundNameColumn).value
+		self.ISIN = self.Reader_Sheet.cell(row=row, column=self.consts.ISINColumn).value
+		self.Designation_List = self.Reader_Sheet.cell(row=row, column=self.consts.DesignationColumn).value
+

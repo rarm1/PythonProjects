@@ -1,5 +1,4 @@
 import pandas as pd
-from pathlib import Path
 # Define your constants here
 FUND_SELL_LIMIT = 0.01
 SECTOR_SELL_LIMIT_TRADED = 0.002
@@ -24,13 +23,13 @@ class TradingAlgo:
         iteration = 0  # Initialize the iteration counter
         #
         while not self._is_on_target():
-            fund = self._trade("Fund Over/Under", "Fund Over/Under", FUND_SELL_LIMIT)
+            self._trade("Fund Over/Under", "Fund Over/Under", FUND_SELL_LIMIT)
             if self._is_on_target():
                 break
-            sector = self._trade("Sector Over/Under", "Sector Over/Under", SECTOR_SELL_LIMIT_TRADED)
+            self._trade("Sector Over/Under", "Sector Over/Under", SECTOR_SELL_LIMIT_TRADED)
             if self._is_on_target():
                 break
-            bucket = self._trade("Bucket Over/Under", "Bucket Over/Under", BUCKET_SELL_LIMIT)
+            self._trade("Bucket Over/Under", "Bucket Over/Under", BUCKET_SELL_LIMIT)
             if self._is_on_target():
                 break
             iteration += 1  # Increment the iteration counter

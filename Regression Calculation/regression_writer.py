@@ -17,8 +17,8 @@ def array_sort():
 	:return:
 	"""
 	# print(DOCUMENT.iloc[0:20, 3:10])
-	performance_dataframe = DOCUMENT.iloc[7:, 3:10].dropna()
-	five_year_returns = DOCUMENT.iloc[7:, 10].dropna()
+	performance_dataframe = DOCUMENT.iloc[7:, 3:10]._drop_na()
+	five_year_returns = DOCUMENT.iloc[7:, 10]._drop_na()
 	return performance_dataframe, five_year_returns
 
 

@@ -1,0 +1,2 @@
+FMDealingCode,TradeIdentifier,TradeFileDate,SchemeIdentifier,SecurityName,SecurityIdentifier,NewSecurity,Direction,DealType,Value,SettlementCurrency,PreviouslyReported,Notes
+RICHARD,1,19/05/2023,70,RYL LNDN STRLG CRDT Z INC,GB00B4W1ZT22,N,Sell,CASH,1.5335375235634694e+95,GBP,N,Rebalancing

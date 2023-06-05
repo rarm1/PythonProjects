@@ -21,7 +21,7 @@ import strip_by_rrr as rrr
 GENERATED_PORTFOLIO_RETURNS_DF = pandas.DataFrame()
 df, sector = rrr.strip_main()
 
-df.dropna(axis=1, how='any', inplace=True)
+df._drop_na(axis=1, how='any', inplace=True)
 isin_df = df.iloc[[0]]
 isin_list = isin_df.values.tolist()[0]
 cap_df = df.iloc[[1]]

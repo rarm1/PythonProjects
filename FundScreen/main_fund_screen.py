@@ -23,11 +23,11 @@ def main():
     """
 
 	"""
-    import_document = ImportProcessing()
+    import_document = ImportProcessing(filetype=".xlsx")
     data_processing = DataProcessing(import_document.DF)
-    pre_processed = output.OutputPreprocessing(data_processing.Output_DF)
-    output.OutputDocument(pre_processed, filename=import_document.Filename)
-    print("Successfully written")
+    # pre_processed = output.OutputPreprocessing(data_processing.Output_DF)
+    # output.OutputDocument(pre_processed, filename=import_document.Filename)
+    # print("Successfully written")
 
 
 if __name__ == '__main__':

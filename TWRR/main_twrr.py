@@ -246,7 +246,7 @@ def get_prices_sheet():
 	global PRICES_SHEET
 	prices_filename = file_id_reader.user_selected_file(file_id_reader.list_all_files(file_type='.csv'), "prices")
 	pandas_pricing = pd.read_csv(prices_filename, dtype=str, usecols=[0, 1, 2, 3, 4])
-	pandas_pricing.dropna(inplace=True)
+	pandas_pricing._drop_na(inplace=True)
 	PRICES_SHEET = np.array(pandas_pricing)
 
 

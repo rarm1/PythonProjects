@@ -18,7 +18,7 @@ class PIDScheme:
     def get_pid(self, designation):
         df = self.df[self.df["Designation"].notna()].copy()
 
-        return df[df['Designation'].dropna().astype(int) == designation.astype(int)]["pID"].values[0]
+        return df[df['Designation']._drop_na().astype(int) == designation.astype(int)]["pID"].values[0]
 
 
 if __name__ == '__main__':

@@ -1,22 +1,23 @@
 import os
-import pathlib
 import time
 from pathlib import Path
 
 import comtypes.client
 import docx
 
-from agency import Agency
-from constants import Constants
-import constants as const
-from email_creation import Email
-from fund_details import FundDetails
-from input_document import InputDocument
-from output_document import OutputDocument
+from AOL.Resources.agency import Agency
+from AOL.Resources.constants import Constants
+from AOL.Resources import constants as const
+from AOL.Resources.email_creation import Email
+from AOL.Resources.fund_details import FundDetails
+from AOL.Resources.output_document import OutputDocument
 
 
 def allowable_execution(row: int) -> object:
-	if InputDocument().Reader_Sheet.cell(row=row, column=Constants().FundNameColumn).value is None:
+	const = Constants()
+	if const.FundNameColumn is None:
+		return False
+	if const.Reader_Sheet.cell(row=row, column=const.FundNameColumn).value is None:
 		return False
 	else:
 		return True
@@ -24,7 +25,6 @@ def allowable_execution(row: int) -> object:
 
 def create_new_document(filepath, fund, agent):
 	search = []
-	constants = Constants()
 	doc_to_read = docx.Document(filepath)
 	for paragraph in doc_to_read.paragraphs:
 		for idx, r in enumerate(paragraph.runs):
@@ -49,7 +49,7 @@ def create_new_document(filepath, fund, agent):
 				elif "isin" in to_search.lower():
 					replacement_text = r.text.replace(search, fund.ISIN)
 				elif "designation_list" in to_search.lower():
-					replacement_text = r.text.replace(search, constants.Designation_List)
+					replacement_text = r.text.replace(search, fund.Designation_List)
 				
 				elif "addr" in to_search.lower():
 					replacement_text = r.text.replace(search, fund.BNYAddress)
@@ -63,24 +63,22 @@ def create_new_document(filepath, fund, agent):
 	doc_to_read.save(filepath)
 
 
-def process_fund(row):
+def process_fund(row, agent):
 	if allowable_execution(row):
 		print(f"Iteration: {row - 1}")
 		fund = FundDetails(row)
 		out = OutputDocument()
-		agent = Agency(row)
 		out.AOL_Filename = f'{fund.Fund_Name} AOL.docx'
-		# out.AOL_Filename = f'{fund.Fund_Name} AOL {Constants().Designation_List}.docx'
 		out.DA_Filename = f'{fund.Fund_Name} DA.docx'
-		# out.DA_Filename = f'{fund.Fund_Name} DA {Constants().Designation_List}.docx'
-		current_path = str(pathlib.Path().parent.resolve())
+		current_path = str(Path().parent.resolve())
 		current_path = str(current_path)
-		out.Location = pathlib.Path(current_path, fund.Fund_Name)
+		current_path += "\\Output"
+		out.Location = Path(current_path, fund.Fund_Name)
 		if not os.path.exists(out.Location):
 			os.makedirs(out.Location)
 		out.create_files()
-		out.AOL_pdf_filename = str(pathlib.Path(out.AOL_Written_File_Path).with_suffix(".pdf"))
-		out.DA_pdf_filename = str(pathlib.Path(out.DA_Written_File_Path).with_suffix(".pdf"))
+		out.AOL_pdf_filename = str(Path(out.AOL_Written_File_Path).with_suffix(".pdf"))
+		out.DA_pdf_filename = str(Path(out.DA_Written_File_Path).with_suffix(".pdf"))
 		create_new_document(out.AOL_Written_File_Path, fund, agent)
 		create_new_document(out.DA_Written_File_Path, fund, agent)
 		word = comtypes.client.CreateObject('Word.Application')
@@ -95,10 +93,12 @@ def process_fund(row):
 
 
 def main():
-	input_document = InputDocument()
+	input_document = Constants()
 	input_sheet = input_document.Reader_Sheet
 	for row in range(2, input_sheet.max_row + 1):
-		process_fund(row)
+		agent = Agency(row)
+		if agent.Agent_Phone is not None:
+			process_fund(row, agent)
 
 
 if __name__ == '__main__':
